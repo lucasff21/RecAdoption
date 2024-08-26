@@ -20,7 +20,6 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipoUsuario;
-
     private String nome;
     private String telefone;
     private String genero;
