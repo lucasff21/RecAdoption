@@ -1,6 +1,6 @@
 package com.recsys.recPet.model;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Animal {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nome;
@@ -19,6 +21,6 @@ public class Animal {
     private String porte;
     private String pelagem;
 
-
-
+    @OneToOne(mappedBy = "animal")
+    private Adocao adocao;
 }
