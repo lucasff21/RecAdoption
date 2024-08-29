@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Entity
 public class Adocao {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate dataAdocao;
     private String status;

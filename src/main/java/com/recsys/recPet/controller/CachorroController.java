@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/cachoro")
+@RequestMapping("/api/cachorro")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class CachorroController {
 
