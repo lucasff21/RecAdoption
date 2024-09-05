@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,13 +70,16 @@ public class CachorroController {
         }
     }
 
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName){
-        byte[] data = cachorroService.downloadFile(fileName);
-        ByteArrayResource resource = new ByteArrayResource(data);
-        return ResponseEntity.ok().contentLength(data.length)
-                .header("Content-type", "application/octet-stream")
-                .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
-                .body(resource);
+    @DeleteMapping("/delete/{fileName}")
+    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
+        try {
+            String result = cachorroService.deleteFile(fileName);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (NoSuchFileException e) {
+            return new ResponseEntity<>("File not found: " + fileName, HttpStatus.NOT_FOUND);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Error deleting file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
+

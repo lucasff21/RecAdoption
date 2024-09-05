@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -78,6 +79,17 @@ public class CachorroService {
             return Files.readAllBytes(filePath);
         } catch (IOException e) {
             throw new RuntimeException("Error reading file", e);
+        }
+    }
+
+    public String deleteFile(String fileName) throws IOException {
+        Path filePath = Paths.get(this.filePath + fileName);
+
+        if (Files.exists(filePath)) {
+            Files.delete(filePath);
+            return fileName + " removed successfully.";
+        } else {
+            throw new NoSuchFileException(fileName);
         }
     }
 
