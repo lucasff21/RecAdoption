@@ -5,8 +5,11 @@ import com.recsys.recPet.repository.CachorroRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,6 +24,9 @@ import java.util.Optional;
 public class CachorroService {
     @Autowired
     private CachorroRepository cachorroRepository;
+
+    @Value("${file.path}")
+    private String filePath;
 
     public List<Cachorro> findAll() {
         return cachorroRepository.findAll();
@@ -50,6 +56,24 @@ public class CachorroService {
     }
 
     public String uploadFile(MultipartFile file) {
+
+        // Substituir o Time pelo id do usuário
+        String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+
+        try {
+            Path destPath = Paths.get(filePath + "//" + fileName);
+            file.transferTo(destPath);
+
+            return destPath.toString();
+        } catch (IOException e) {
+            System.err.println("Error saving the file: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /* MODELO SALVANDO COM ARQUIVO TEMPORARIO ********************************************
+    public String uploadFile(MultipartFile file) {
         File fileObj = convertMultiPartFileToFile(file);
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
@@ -69,6 +93,7 @@ public class CachorroService {
         }
     }
 
+
     private File convertMultiPartFileToFile(MultipartFile file) {
         File convertedFile = new File(file.getOriginalFilename());
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
@@ -79,5 +104,7 @@ public class CachorroService {
         }
         return convertedFile;
     }
+
+*/
 
 }
