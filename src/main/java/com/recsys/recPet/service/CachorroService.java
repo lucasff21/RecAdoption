@@ -61,7 +61,7 @@ public class CachorroService {
         String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
-            Path destPath = Paths.get(filePath + "//" + fileName);
+            Path destPath = Paths.get(this.filePath + fileName);
             file.transferTo(destPath);
 
             return destPath.toString();
@@ -69,6 +69,15 @@ public class CachorroService {
             System.err.println("Error saving the file: " + e.getMessage());
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public byte[] downloadFile(String fileName) {
+        try{
+            Path filePath = Paths.get(this.filePath + fileName);
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file", e);
         }
     }
 

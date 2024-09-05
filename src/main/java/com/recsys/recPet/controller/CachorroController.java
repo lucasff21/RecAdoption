@@ -67,4 +67,14 @@ public class CachorroController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/download/{fileName}")
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName){
+        byte[] data = cachorroService.downloadFile(fileName);
+        ByteArrayResource resource = new ByteArrayResource(data);
+        return ResponseEntity.ok().contentLength(data.length)
+                .header("Content-type", "application/octet-stream")
+                .header("Content-disposition", "attachment; filename=\"" + fileName + "\"")
+                .body(resource);
+    }
 }
