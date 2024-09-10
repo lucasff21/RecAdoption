@@ -23,6 +23,6 @@ public class Endereco {
     private String uf;
     @OneToOne
     @JoinColumn(name= "usuario_id")
-    private Usuario usuario;
+    private User usuario;
 
 }

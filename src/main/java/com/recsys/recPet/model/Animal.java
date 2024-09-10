@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Animal {
 
     @Id
@@ -21,6 +22,4 @@ public class Animal {
     private String porte;
     private String pelagem;
 
-    @OneToOne(mappedBy = "animal")
-    private Adocao adocao;
 }

@@ -19,7 +19,7 @@ public class Adocao {
     private String status;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private Usuario usuario;
+    private User usuario;
 
     @OneToOne
     private Animal animal;
