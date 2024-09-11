@@ -6,16 +6,18 @@ import com.recsys.recPet.dto.RecoveryJwtTokenDto;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.security.JwtTokenService;
-import com.recsys.recPet.security.SecurityConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 
+@Service
 public class UserService {
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
@@ -26,7 +28,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private SecurityConfiguration securityConfiguration;
+    private PasswordEncoder passwordEncoder; // Injeção do PasswordEncoder
 
     // Método responsável por autenticar um usuário e retornar um token JWT
     public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
@@ -46,14 +48,11 @@ public class UserService {
 
     // Método responsável por criar um usuário
     public void createUser(CreateUserDTO createUserDto) {
-
-        // Cria um novo usuário com os dados fornecidos
         User newUser = new User();
         newUser.setEmail(createUserDto.email());
-        newUser.setPassword(createUserDto.password())       ;
+        newUser.setPassword(passwordEncoder.encode(createUserDto.password())); // Codificação da senha
         newUser.setTipoUsuario(Set.of(createUserDto.tipoUsuario()));
-
-        // Salva o novo usuário no banco de dados
         userRepository.save(newUser);
+
     }
 }

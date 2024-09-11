@@ -1,5 +1,6 @@
 package com.recsys.recPet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.recsys.recPet.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name="user_")
 public class User implements UserDetails {
 
     @Id
@@ -33,7 +35,6 @@ public class User implements UserDetails {
 
     @ElementCollection(targetClass = TipoUsuario.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_usuario")
     private Set<TipoUsuario> tipoUsuario;
 
     private String nome;
@@ -42,11 +43,12 @@ public class User implements UserDetails {
     private LocalDate dataNascimento;
     private String cpf;
 
-
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private Endereco endereco;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Adocao> adocaoList = new ArrayList<>();
 
     @Override

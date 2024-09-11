@@ -1,5 +1,6 @@
 package com.recsys.recPet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +19,10 @@ public class Adocao {
     private LocalDate dataAdocao;
     private String status;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User usuario;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
     @OneToOne
     private Animal animal;

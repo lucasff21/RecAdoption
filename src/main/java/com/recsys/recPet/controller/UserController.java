@@ -3,19 +3,15 @@ package com.recsys.recPet.controller;
 import com.recsys.recPet.dto.CreateUserDTO;
 import com.recsys.recPet.dto.LoginUserDto;
 import com.recsys.recPet.dto.RecoveryJwtTokenDto;
-import com.recsys.recPet.model.User;
-import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
     @Autowired
