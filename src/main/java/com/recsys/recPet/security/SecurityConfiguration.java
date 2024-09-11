@@ -22,20 +22,17 @@ public class SecurityConfiguration {
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/users/login",
-            "/users"
-    };
+            "/users",
 
-    public static final String[] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
-            "/users/test"
     };
 
     public static final String[] ENDPOINTS_ADOTANTE = {
-            "/api/cachorro",
-            "/api/cachorro/*"
+
     };
 
     public static final String[] ENDPOINTS_ADMIN = {
-            "/users/test/administrator"
+            "/api/cachorro",
+            "/api/cachorro/*"
     };
 
     @Bean
@@ -46,7 +43,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz ->
                         authz
                                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
-                                .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_REQUIRED).authenticated()
                                 .requestMatchers(ENDPOINTS_ADMIN).hasAuthority("ADMIN")
                                 .requestMatchers(ENDPOINTS_ADOTANTE).hasAuthority("ADOTANTE")
                                 .anyRequest().denyAll()

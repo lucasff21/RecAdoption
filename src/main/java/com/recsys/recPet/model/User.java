@@ -44,11 +44,9 @@ public class User implements UserDetails {
     private String cpf;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
     private Endereco endereco;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonIgnore
     private List<Adocao> adocaoList = new ArrayList<>();
 
     @Override

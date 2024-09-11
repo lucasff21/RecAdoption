@@ -36,6 +36,9 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
                     String subject = jwtTokenService.getSubjectFromToken(token);
                     User user = userRepository.findByEmail(subject).orElseThrow(() -> new RuntimeException("User not found"));
 
+                    // Adicione logs para verificar o conteúdo do usuário
+                    System.out.println("Usuário autenticado: " + user.getEmail() + " - Roles: " + user.getAuthorities());
+
                     Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     System.out.println("AUTENTICADO: " + user.getEmail());
