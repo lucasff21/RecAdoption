@@ -6,6 +6,7 @@ import com.recsys.recPet.dto.RecoveryJwtTokenDto;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.security.JwtTokenService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -28,9 +31,8 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Injeção do PasswordEncoder
+    private PasswordEncoder passwordEncoder;
 
-    // Método responsável por autenticar um usuário e retornar um token JWT
     public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
         System.out.println("USUARIO CHEGANDO authenticateUser " + loginUserDto);
 
@@ -56,5 +58,30 @@ public class UserService {
         newUser.setTipoUsuario(Set.of(createUserDto.tipoUsuario()));
         userRepository.save(newUser);
 
+    }
+
+    public User update(User userObject){
+        User userGet = findById(userObject.getId());
+
+        if(userGet != null){
+            userObject.setEmail(userGet.getEmail());
+           return userRepository.save(userObject);
+        } else {
+            throw new EntityNotFoundException("Usuario não encontrado");
+        }
+    }
+
+    public List<User> findAll(){
+        return userRepository.findAll();
+    }
+
+    public User findById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        }
+
+    public void delete(Long id){
+        User user  = findById(id);
+        userRepository.delete(user);
     }
 }
