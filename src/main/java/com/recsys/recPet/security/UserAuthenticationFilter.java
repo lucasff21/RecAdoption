@@ -29,36 +29,43 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("CHEGOU: " + request.getRequestURI());
 
         if (checkIfEndpointIsNotPublic(request)) {
-            System.out.println("ENTROU");
             String token = recoveryToken(request);
             if (token != null) {
                 try {
                     String subject = jwtTokenService.getSubjectFromToken(token);
-                    User user = userRepository.findByEmail(subject).orElseThrow(() -> new RuntimeException("User not found"));
+                    System.out.println("Subject extraído do token: " + subject);
 
-                    // Adicione logs para verificar o conteúdo do usuário
-                    System.out.println("Usuário autenticado: " + user.getEmail() + " - Roles: " + user.getAuthorities());
+                    // Verifique se o email está correto
+                    User user = userRepository.findByEmail(subject)
+                            .orElseThrow(() -> new RuntimeException("User not found"));
+
+                    System.out.println("Usuário encontrado: " + user.getEmail());
 
                     Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     System.out.println("AUTENTICADO: " + user.getEmail());
                 } catch (Exception e) {
-                    e.printStackTrace(); // Adicione log para identificar problemas
+                    e.printStackTrace();
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou não autenticado.");
+                    return;
                 }
+            } else {
+                System.out.println("Token não encontrado no cabeçalho.");
             }
         }
 
-        // Chama o próximo filtro na cadeia após a autenticação, se necessário
         filterChain.doFilter(request, response);
     }
-
     private String recoveryToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
+        System.out.println("Authorization Header: " + authorizationHeader);
+
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            return authorizationHeader.substring(7);
+            return authorizationHeader.substring(7);  // Remove o prefixo "Bearer "
         }
         return null;
     }
+
 
     private boolean checkIfEndpointIsNotPublic(HttpServletRequest request) {
         String requestURI = request.getRequestURI();

@@ -49,6 +49,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Adocao> adocaoList = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_questionario",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "questionario_id", referencedColumnName = "id"))
+    private Questionario questionario;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return tipoUsuario

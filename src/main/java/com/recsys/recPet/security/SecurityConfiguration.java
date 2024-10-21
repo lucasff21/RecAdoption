@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
@@ -21,8 +22,9 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/users/login",
+            "/api/cachorro/findAll",
             "/users",
+            "/users/*",
 
     };
 
@@ -32,7 +34,8 @@ public class SecurityConfiguration {
 
     public static final String[] ENDPOINTS_ADMIN = {
             "/api/cachorro",
-            "/api/cachorro/*"
+            "/api/questionario",
+            "/api/questionario/*"
     };
 
     @Bean
@@ -42,6 +45,7 @@ public class SecurityConfiguration {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
                         authz
+                                //.requestMatchers(HttpMethod.GET, "/findAll").permitAll()
                                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                                 .requestMatchers(ENDPOINTS_ADMIN).hasAuthority("ADMIN")
                                 .requestMatchers(ENDPOINTS_ADOTANTE).hasAuthority("ADOTANTE")

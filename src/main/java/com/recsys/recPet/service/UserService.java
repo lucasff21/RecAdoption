@@ -78,7 +78,7 @@ public class UserService {
     public User findById(Long id){
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-        }
+    }
 
     public void delete(Long id){
         User user  = findById(id);

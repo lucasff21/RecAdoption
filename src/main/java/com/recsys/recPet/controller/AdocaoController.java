@@ -23,7 +23,7 @@ public class AdocaoController {
     public ResponseEntity<Adocao> save(AdocaoDTO adocaoDTO){
         Adocao adocao = new Adocao();
         BeanUtils.copyProperties(adocaoDTO, adocao);
-        Adocao adocaoCreated = adocaoService.save(adocao);
+        Adocao adocaoCreated = adocaoService.update(adocao);
         return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
     }
 

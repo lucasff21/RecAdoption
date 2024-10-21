@@ -17,6 +17,7 @@ public class JwtTokenService {
     private static final String ISSUER = "recPet-api"; // Emissor do token
 
     public String generateToken(User user) {
+        System.out.println("Gerando token para o usuário: " + user.getEmail());
         try {
             // Define o algoritmo HMAC SHA256 para criar a assinatura do token passando a chave secreta definida
             Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
@@ -39,6 +40,8 @@ public class JwtTokenService {
                     .build()
                     .verify(token) // Verifica a validade do token
                     .getSubject(); // Obtém o assunto (neste caso, o nome de usuário) do token
+
+
         } catch (JWTVerificationException exception){
             throw new JWTVerificationException("Token inválido ou expirado.");
         }
