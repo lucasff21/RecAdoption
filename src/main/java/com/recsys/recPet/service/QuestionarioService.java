@@ -43,6 +43,7 @@ public class QuestionarioService {
         questionarioRepository.delete(questionario);
     }
 
-
-
+    public Questionario findByUser(Long id){
+        return questionarioRepository.findByUser_Id(id);
+    }
 }

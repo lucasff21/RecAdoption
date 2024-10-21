@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public record UserDTO(Long id,
-                      String password,
                       String email,
                       Set<TipoUsuario> tipoUsuario,
                       String nome,

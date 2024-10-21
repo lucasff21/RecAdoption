@@ -25,6 +25,8 @@ public class Questionario {
     private Boolean quedaPelo;
     private Boolean tendeLatir;
 
-    @OneToOne(mappedBy = "questionario")
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
 }

@@ -84,4 +84,8 @@ public class UserService {
         User user  = findById(id);
         userRepository.delete(user);
     }
+
+    public Optional<User> findByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
 }

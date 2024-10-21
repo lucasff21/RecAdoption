@@ -5,6 +5,7 @@ import com.recsys.recPet.dto.UserDTO;
 import com.recsys.recPet.model.Questionario;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.QuestionarioService;
+import com.recsys.recPet.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/questionario")
@@ -24,31 +26,31 @@ public class QuestionarioController {
     private QuestionarioService questionarioService;
 
     @PostMapping
-    public ResponseEntity<Questionario> save(@RequestBody QuestionarioDTO questionarioDTO,
-                                             @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<?> save(@RequestBody QuestionarioDTO questionarioDTO,
+                                  @AuthenticationPrincipal User user) {
 
-        if (userDetails == null) {
-            System.out.println("userDetails está null");
-            throw new RuntimeException("Usuário autenticado não encontrado");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Usuário autenticado não encontrado");
         }
 
-        if (!(userDetails instanceof User)) {
-            System.out.println("Tipo de userDetails: " + userDetails.getClass().getName());
-            throw new RuntimeException("Usuário autenticado não encontrado");
-        }
+        Questionario existingQuestionario = questionarioService.findByUser(user.getId());
 
-        User user = (User) userDetails;
-        System.out.println("Usuário autenticado: " + user.getEmail());
+        if (existingQuestionario != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário já está associado a outro formulário");
+        }
 
         Questionario questionario = new Questionario();
         BeanUtils.copyProperties(questionarioDTO, questionario);
         questionario.setUser(user);
+        user.setQuestionario(questionario);
 
+        // Salva o questionário no banco de dados
         Questionario questionarioSalvo = questionarioService.save(questionario);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(questionarioSalvo);
     }
-
 
 
     @PutMapping("/{id}")

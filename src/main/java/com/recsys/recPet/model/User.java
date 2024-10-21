@@ -49,11 +49,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Adocao> adocaoList = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_questionario",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "questionario_id", referencedColumnName = "id"))
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Questionario questionario;
+
 
 
     @Override
