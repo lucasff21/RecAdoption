@@ -29,14 +29,16 @@ public class SecurityConfiguration {
     };
 
     public static final String[] ENDPOINTS_ADOTANTE = {
-            "/api/questionario",
-            "/api/cachorro"
+
     };
 
     public static final String[] ENDPOINTS_ADMIN = {
-            "/api/questionario",
             "/api/cachorro",
+            "/api/cachorro/*",
+
+            "/api/questionario",
             "/api/questionario/*"
+
     };
 
     @Bean
@@ -46,17 +48,25 @@ public class SecurityConfiguration {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
                         authz
-                                //.requestMatchers(HttpMethod.GET, "/findAll").permitAll()
                                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+                                // Permissões para Admin
+                                .requestMatchers(HttpMethod.GET,"/api/questionario", "/api/questionario/*").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.PUT,"/api/questionario", "/api/questionario/*").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE,"/api/questionario", "/api/questionario/*").hasAuthority("ADMIN")
+                                //.requestMatchers(HttpMethod.POST, "/api/cachorro").hasAuthority("ADMIN")
                                 .requestMatchers(ENDPOINTS_ADMIN).hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/questionario").hasAuthority("ADOTANTE")
-                                .anyRequest().denyAll()
+
+
+                                .requestMatchers(HttpMethod.POST, "/api/questionario").hasAuthority("ADOTANTE") // Adotante pode fazer POST
+
+                                .anyRequest().denyAll() // Deny all for other requests
                 )
                 .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-    @Bean
+
+        @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
