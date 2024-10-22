@@ -29,12 +29,13 @@ public class SecurityConfiguration {
     };
 
     public static final String[] ENDPOINTS_ADOTANTE = {
-
+            "/api/questionario",
+            "/api/cachorro"
     };
 
     public static final String[] ENDPOINTS_ADMIN = {
-            "/api/cachorro",
             "/api/questionario",
+            "/api/cachorro",
             "/api/questionario/*"
     };
 
@@ -48,7 +49,7 @@ public class SecurityConfiguration {
                                 //.requestMatchers(HttpMethod.GET, "/findAll").permitAll()
                                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
                                 .requestMatchers(ENDPOINTS_ADMIN).hasAuthority("ADMIN")
-                                .requestMatchers(ENDPOINTS_ADOTANTE).hasAuthority("ADOTANTE")
+                                .requestMatchers(HttpMethod.POST, "/api/questionario").hasAuthority("ADOTANTE")
                                 .anyRequest().denyAll()
                 )
                 .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
