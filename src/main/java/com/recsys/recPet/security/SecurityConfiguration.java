@@ -35,13 +35,12 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz ->
                         authz
                                 // Permitir acesso para ADOTANTE e ADMIN em rotas de questionário
-                                .requestMatchers(HttpMethod.GET, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário").hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário","/api/questionário/*").hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário").hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/adocao", "/api/adocao/*", "/api/questionario/*").hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/adocao", "/api/adocao/*", "/api/questionario/*").hasAnyAuthority("ADMIN", "ADOTANTE")
 
 
-                                .requestMatchers(HttpMethod.GET, "/api/questionário/*").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/cachorro").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/cachorro").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/cachorro").hasAuthority("ADMIN")
