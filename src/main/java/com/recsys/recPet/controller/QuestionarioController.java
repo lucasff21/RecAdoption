@@ -35,7 +35,6 @@ public class QuestionarioController {
         }
 
         Questionario existingQuestionario = questionarioService.findByUser(user.getId());
-
         if (existingQuestionario != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Usuário já está associado a outro formulário");
@@ -43,14 +42,14 @@ public class QuestionarioController {
 
         Questionario questionario = new Questionario();
         BeanUtils.copyProperties(questionarioDTO, questionario);
-        questionario.setUser(user);
-        user.setQuestionario(questionario);
 
-        // Salva o questionário no banco de dados
+        questionario.setUser(user);
+
         Questionario questionarioSalvo = questionarioService.save(questionario);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(questionarioSalvo);
     }
+
 
 
     @PutMapping("/{id}")

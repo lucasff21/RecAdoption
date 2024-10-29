@@ -22,23 +22,9 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/api/cachorro/findAll",
+            "/api/cachorro",
             "/users",
             "/users/*",
-
-    };
-
-    public static final String[] ENDPOINTS_ADOTANTE = {
-
-    };
-
-    public static final String[] ENDPOINTS_ADMIN = {
-            "/api/cachorro",
-            "/api/cachorro/*",
-
-            "/api/questionario",
-            "/api/questionario/*"
-
     };
 
     @Bean
@@ -48,18 +34,22 @@ public class SecurityConfiguration {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
                         authz
+                                // Permitir acesso para ADOTANTE e ADMIN em rotas de questionário
+                                .requestMatchers(HttpMethod.GET, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário").hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário").hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/adocao", "/api/adocao/*", "/api/questionario/*").hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/adocao", "/api/adocao/*", "/api/questionario/*").hasAnyAuthority("ADMIN", "ADOTANTE")
+
+
+                                .requestMatchers(HttpMethod.GET, "/api/questionário/*").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/cachorro").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/cachorro").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/cachorro").hasAuthority("ADMIN")
+
                                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
-                                // Permissões para Admin
-                                .requestMatchers(HttpMethod.GET,"/api/questionario", "/api/questionario/*").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.PUT,"/api/questionario", "/api/questionario/*").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE,"/api/questionario", "/api/questionario/*").hasAuthority("ADMIN")
-                                //.requestMatchers(HttpMethod.POST, "/api/cachorro").hasAuthority("ADMIN")
-                                .requestMatchers(ENDPOINTS_ADMIN).hasAuthority("ADMIN")
 
 
-                                .requestMatchers(HttpMethod.POST, "/api/questionario").hasAuthority("ADOTANTE") // Adotante pode fazer POST
-
-                                .anyRequest().denyAll() // Deny all for other requests
+                                .anyRequest().denyAll() // Negar todas as outras requisições
                 )
                 .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

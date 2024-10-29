@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -46,15 +47,17 @@ public class UserService {
         // Obtém o objeto UserDetails do usuário autenticado
         User userDetails = (User) authentication.getPrincipal();
 
+        String token = jwtTokenService.generateToken(userDetails);
+
         // Gera um token JWT para o usuário autenticado
-        return new RecoveryJwtTokenDto(jwtTokenService.generateToken(userDetails));
+        return new RecoveryJwtTokenDto(token);
     }
 
     // Método responsável por criar um usuário
     public void createUser(CreateUserDTO createUserDto) {
         User newUser = new User();
         newUser.setEmail(createUserDto.email());
-        newUser.setPassword(passwordEncoder.encode(createUserDto.password())); // Codificação da senha
+        newUser.setPassword(passwordEncoder.encode(createUserDto.password()));
         newUser.setTipoUsuario(Set.of(createUserDto.tipoUsuario()));
         userRepository.save(newUser);
 
