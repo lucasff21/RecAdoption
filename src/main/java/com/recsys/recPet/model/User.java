@@ -33,9 +33,8 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String email;
 
-    @ElementCollection(targetClass = TipoUsuario.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private Set<TipoUsuario> tipoUsuario;
+    private TipoUsuario tipoUsuario;
 
     private String nome;
     private String telefone;
@@ -57,10 +56,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return tipoUsuario
-                .stream()
-                .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toList());
+        String authority = tipoUsuario.name();
+        return tipoUsuario == null ? new ArrayList<>() :
+                List.of(new SimpleGrantedAuthority(authority));
     }
 
     @Override

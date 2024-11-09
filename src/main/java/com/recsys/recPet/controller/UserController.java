@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -28,7 +29,7 @@ public class UserController {
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Void> createUser(@RequestBody CreateUserDTO createUserDto) {
         userService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -45,7 +46,7 @@ public class UserController {
 
     }
 
-    @GetMapping
+    @GetMapping("/findall")
     public ResponseEntity<List<User>> findAll(){
         List<User> userList = userService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(userList);
@@ -61,5 +62,17 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/findbyemail/{email}")
+    public ResponseEntity<?> findByEmail(@PathVariable String email){
+        Optional<User> user = userService.findByEmail(email);
+
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(user.get());
+
     }
 }

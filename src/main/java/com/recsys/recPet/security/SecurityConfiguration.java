@@ -22,9 +22,11 @@ public class SecurityConfiguration {
     private UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/api/cachorro",
-            "/users",
-            "/users/*",
+            "/api/cachorro/findall",
+            "/api/cachorro/{id}",
+
+            "/users/create",
+            "/users/login",
     };
 
     @Bean
@@ -35,15 +37,15 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz ->
                         authz
                                 // Permitir acesso para ADOTANTE e ADMIN em rotas de questionário
-                                .requestMatchers(HttpMethod.GET, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário","/api/questionário/*").hasAnyAuthority("ADOTANTE", "ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/api/adocao", "/api/adocao/*", "/api/questionario", "/api/questionário").hasAnyAuthority("ADOTANTE", "ADMIN")
-                                .requestMatchers(HttpMethod.PUT, "/api/adocao", "/api/adocao/*", "/api/questionario/*").hasAnyAuthority("ADOTANTE", "ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/adocao", "/api/adocao/*", "/api/questionario/*").hasAnyAuthority("ADMIN", "ADOTANTE")
+                                .requestMatchers(HttpMethod.GET, "/api/questionario/findall", "/api/questionario/{id}", "/users/findbyemail/{email}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.POST,"/api/questionario" ).hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.PUT,"/api/questionario/{id}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
 
 
-                                .requestMatchers(HttpMethod.POST, "/api/cachorro").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.PUT, "/api/cachorro").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/cachorro").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/users/findall").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api/cachorro/create").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.PUT, "/api/cachorro/{id}", "/users/{id}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/cachorro", "/api/questionario/{id}", "/users/{id}").hasAuthority("ADMIN")
 
                                 .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
 
@@ -55,7 +57,7 @@ public class SecurityConfiguration {
     }
 
 
-        @Bean
+    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }

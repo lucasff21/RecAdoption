@@ -1,7 +1,6 @@
 package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.QuestionarioDTO;
-import com.recsys.recPet.dto.UserDTO;
 import com.recsys.recPet.model.Questionario;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.QuestionarioService;
@@ -11,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/questionario")
@@ -24,6 +21,9 @@ public class QuestionarioController {
 
     @Autowired
     private QuestionarioService questionarioService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody QuestionarioDTO questionarioDTO,
@@ -54,22 +54,39 @@ public class QuestionarioController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Questionario> update(@PathVariable Long id, @RequestBody QuestionarioDTO questionarioDTO){
-        Questionario questionario = new Questionario();
-        BeanUtils.copyProperties(questionarioDTO, questionario);
-       Questionario questionarioSalvo = questionarioService.update(questionario);
+
+        System.out.println(questionarioDTO);
+
+        Questionario questionario = questionarioService.findById(id);
+
+        BeanUtils.copyProperties(questionarioDTO, questionario, "user");
+
+
+        if (questionarioDTO.user() != null && questionarioDTO.user().getId() != null) {
+            User user = userService.findById(questionarioDTO.user().getId());
+            questionario.setUser(user);
+        }
+
+        Questionario questionarioSalvo = questionarioService.update(questionario);
 
         return ResponseEntity.status(HttpStatus.OK).body(questionarioSalvo);
     }
 
-    @GetMapping
+
+    @GetMapping("/findall")
     public ResponseEntity<List<Questionario>> findAll(){
         List<Questionario> questionarioList = questionarioService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(questionarioList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Questionario> findById(@PathVariable Long id){
+    public ResponseEntity<Object> findById(@PathVariable Long id){
         Questionario questionario = questionarioService.findById(id);
+
+        if(questionario == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Questionario não encontrado.");
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(questionario);
     }
 

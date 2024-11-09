@@ -7,7 +7,7 @@ import java.util.Set;
 
 public record UserDTO(Long id,
                       String email,
-                      Set<TipoUsuario> tipoUsuario,
+                      TipoUsuario tipoUsuario,
                       String nome,
                       String telefone,
                       String genero,

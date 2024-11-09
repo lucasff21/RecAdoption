@@ -58,10 +58,11 @@ public class UserService {
         User newUser = new User();
         newUser.setEmail(createUserDto.email());
         newUser.setPassword(passwordEncoder.encode(createUserDto.password()));
-        newUser.setTipoUsuario(Set.of(createUserDto.tipoUsuario()));
+        // Aqui, alteramos para apenas um único papel
+        newUser.setTipoUsuario(createUserDto.tipoUsuario());
         userRepository.save(newUser);
-
     }
+
 
     public User update(User userObject){
         User userGet = findById(userObject.getId());

@@ -22,7 +22,7 @@ public class CachorroController {
     @Autowired
     private CachorroService cachorroService;
 
-    @GetMapping
+    @GetMapping("/findall")
     public ResponseEntity<List<Cachorro>> findAll() {
         List<Cachorro> cachorroList = cachorroService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(cachorroList);
@@ -34,7 +34,7 @@ public class CachorroController {
         return ResponseEntity.status(HttpStatus.OK).body(cachorro);
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Cachorro> save(@RequestBody CachorroDTO cachorroDTO) {
         Cachorro cachorro = new Cachorro();
         BeanUtils.copyProperties(cachorroDTO, cachorro);
