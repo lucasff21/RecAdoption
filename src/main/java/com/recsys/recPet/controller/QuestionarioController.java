@@ -101,4 +101,14 @@ public class QuestionarioController {
         System.out.println("Usuário autenticado: " + user.getEmail());
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Questionario> getQuestionarioByEmail(@PathVariable String email) {
+        Questionario questionario = questionarioService.getQuestionarioByEmail(email);
+        if (questionario != null) {
+            return ResponseEntity.ok(questionario);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

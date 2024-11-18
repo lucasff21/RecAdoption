@@ -46,4 +46,8 @@ public class QuestionarioService {
     public Questionario findByUser(Long id){
         return questionarioRepository.findByUser_Id(id);
     }
+
+    public Questionario getQuestionarioByEmail(String email) {
+        return questionarioRepository.findByUserEmail(email);
+    }
 }

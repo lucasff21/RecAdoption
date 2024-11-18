@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz ->
                         authz
                                 // Permitir acesso para ADOTANTE e ADMIN em rotas de questionário
-                                .requestMatchers(HttpMethod.GET, "/api/questionario/findall", "/api/questionario/{id}", "/users/findbyemail/{email}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/questionario/findall", "/api/questionario/{id}", "/users/findbyemail/{email}", "/users/{id}", "/api/questionario/email/{email}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.POST,"/api/questionario" ).hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.PUT,"/api/questionario/{id}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
 
