@@ -59,14 +59,28 @@ public class CachorroController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("/uploade-image")
+    @PostMapping("/upload-image")
     public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file) {
-        if (file != null) {
-            return new ResponseEntity<>(cachorroService.uploadFile(file), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            if (file.isEmpty()) {
+                return new ResponseEntity<>("O arquivo está vazio.", HttpStatus.BAD_REQUEST);
+            }
+
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return new ResponseEntity<>("O arquivo não é uma imagem válida.", HttpStatus.BAD_REQUEST);
+            }
+
+            String fileName = cachorroService.uploadFile(file);
+            return new ResponseEntity<>(fileName, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("Erro no upload: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Erro ao fazer upload: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
     @DeleteMapping("/delete/{fileName}")
     public ResponseEntity<String> deleteFile(@PathVariable String fileName) {

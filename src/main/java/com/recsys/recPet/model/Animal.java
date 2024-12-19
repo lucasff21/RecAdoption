@@ -21,5 +21,7 @@ public class Animal {
     private String sexo;
     private String porte;
     private String pelagem;
+    private String imagePath;
+    //private String tipoAnimal;
 
 }

@@ -19,6 +19,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -57,19 +58,23 @@ public class CachorroService {
     }
 
     public String uploadFile(MultipartFile file) {
+        String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
 
-        // Substituir o Time pelo id do usuário
-        String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+        if (fileName.contains("..")) {
+            throw new IllegalArgumentException("O nome do arquivo contém sequência inválida: " + fileName);
+        }
 
         try {
-            Path destPath = Paths.get(this.filePath + fileName);
-            file.transferTo(destPath);
+            // Garantir que o diretório existe
+            Path destPath = Paths.get(this.filePath).resolve(fileName);
+            Files.createDirectories(destPath.getParent());
 
-            return destPath.toString();
+            // Salvar o arquivo
+            file.transferTo(destPath.toFile());
+
+            return fileName; // Retornar apenas o nome do arquivo
         } catch (IOException e) {
-            System.err.println("Error saving the file: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Erro ao salvar o arquivo: " + e.getMessage(), e);
         }
     }
 

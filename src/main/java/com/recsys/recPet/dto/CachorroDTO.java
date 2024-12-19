@@ -11,5 +11,8 @@ public record CachorroDTO(String nome,
                           Boolean brincalhao,
                           Boolean necessidadeCorrer,
                           Boolean quedaPelo,
-                          Boolean tendeLatir) {
+                          Boolean tendeLatir,
+    String imagePath
+
+) {
 }
