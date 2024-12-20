@@ -33,6 +33,7 @@ public class SecurityConfiguration {
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/api/cachorro/findall",
             "/api/cachorro/{id}",
+            "/api/cachorro/download-image",
 
             "/users/create",
             "/users/login",

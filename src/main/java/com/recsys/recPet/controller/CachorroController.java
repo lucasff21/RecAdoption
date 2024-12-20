@@ -5,13 +5,17 @@ import com.recsys.recPet.dto.CachorroDTO;
 import com.recsys.recPet.service.CachorroService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -91,6 +95,25 @@ public class CachorroController {
             return new ResponseEntity<>("File not found: " + fileName, HttpStatus.NOT_FOUND);
         } catch (IOException e) {
             return new ResponseEntity<>("Error deleting file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/download-image")
+    public ResponseEntity<byte[]> getProfileImage(@RequestParam String fileName) {
+        try {
+            byte[] imageData = cachorroService.downloadFile(fileName);
+            String fileType = Files.probeContentType(Paths.get(fileName));
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType(fileType));
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .body(imageData);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
         }
     }
 }

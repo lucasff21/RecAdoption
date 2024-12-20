@@ -98,39 +98,6 @@ public class CachorroService {
         }
     }
 
-    /* MODELO SALVANDO COM ARQUIVO TEMPORARIO ********************************************
-    public String uploadFile(MultipartFile file) {
-        File fileObj = convertMultiPartFileToFile(file);
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
-        String uploadDir = "C:\\Users\\Lucas\\Documents\\Projeto\\RecPet Projeto\\Upload image\\";
-
-        try {
-            Path destPath = Paths.get(uploadDir + fileName);
-            Files.copy(fileObj.toPath(), destPath);
-
-            return fileName;
-        } catch (IOException e) {
-            System.err.println("Error saving the file: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        } finally {
-            fileObj.delete();
-        }
-    }
-
-
-    private File convertMultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(file.getOriginalFilename());
-        try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
-            fos.write(file.getBytes());
-        } catch (IOException e) {
-            System.err.println("Error converting multipartFile to file: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return convertedFile;
-    }
-
-*/
 
 }

@@ -26,4 +26,6 @@ public class Adocao {
 
     @OneToOne
     private Animal animal;
+
+
 }
