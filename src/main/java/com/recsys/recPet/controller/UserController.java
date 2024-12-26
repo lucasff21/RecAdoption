@@ -1,11 +1,9 @@
 package com.recsys.recPet.controller;
 
-import com.recsys.recPet.dto.CreateUserDTO;
-import com.recsys.recPet.dto.LoginUserDto;
-import com.recsys.recPet.dto.RecoveryJwtTokenDto;
-import com.recsys.recPet.dto.UserDTO;
+import com.recsys.recPet.dto.*;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createUser(@RequestBody CreateUserDTO createUserDto) {
+    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateAdoptiveUserDTO createUserDto) {
         userService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
