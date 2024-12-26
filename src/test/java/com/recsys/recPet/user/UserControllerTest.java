@@ -52,7 +52,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deveRetornarErroQuandoDadoForInválido() throws Exception {
+    void deveRetornarErroQuandoDadoForInvalido() throws Exception {
         Map<String, Object> usuarioInvalido = new HashMap<>();
         usuarioInvalido.put("nome", "");
         usuarioInvalido.put("cpf", "123");

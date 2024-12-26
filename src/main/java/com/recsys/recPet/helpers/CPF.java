@@ -45,9 +45,7 @@ public class CPF {
                 dig11 = '0';
             else dig11 = (char)(r + 48);
 
-            if ((dig10 == cpf.charAt(9)) && (dig11 == cpf.charAt(10)))
-                return(true);
-            else return(false);
+            return (dig10 == cpf.charAt(9)) && (dig11 == cpf.charAt(10));
         } catch (InputMismatchException erro) {
             return(false);
         }
