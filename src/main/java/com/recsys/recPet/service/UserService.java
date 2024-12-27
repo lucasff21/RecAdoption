@@ -1,9 +1,12 @@
 package com.recsys.recPet.service;
 
-import com.recsys.recPet.dto.CreateUserDTO;
+import com.recsys.recPet.dto.CreateAdoptiveUserDTO;
 import com.recsys.recPet.dto.LoginUserDto;
 import com.recsys.recPet.dto.RecoveryJwtTokenDto;
+import com.recsys.recPet.enums.TipoUsuario;
+import com.recsys.recPet.model.Endereco;
 import com.recsys.recPet.model.User;
+import com.recsys.recPet.repository.EnderecoRepository;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.security.JwtTokenService;
 import jakarta.persistence.EntityNotFoundException;
@@ -16,8 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -33,6 +34,10 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+
 
     public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
         System.out.println("USUARIO CHEGANDO authenticateUser " + loginUserDto);
@@ -54,13 +59,27 @@ public class UserService {
     }
 
     // Método responsável por criar um usuário
-    public void createUser(CreateUserDTO createUserDto) {
+    public void createUser(CreateAdoptiveUserDTO createUserDto) {
         User newUser = new User();
-        newUser.setEmail(createUserDto.email());
-        newUser.setPassword(passwordEncoder.encode(createUserDto.password()));
-        // Aqui, alteramos para apenas um único papel
-        newUser.setTipoUsuario(createUserDto.tipoUsuario());
+        newUser.setEmail(createUserDto.getEmail());
+        newUser.setPassword(passwordEncoder.encode(createUserDto.getSenha()));
+        newUser.setTipoUsuario(TipoUsuario.ADOTANTE);
+        newUser.setNome(createUserDto.getNome());
+        newUser.setCpf(createUserDto.getCpf());
+        newUser.setTelefone(createUserDto.getTelefone());
+        newUser.setGenero(createUserDto.getGenero());
+        newUser.setDataNascimento(createUserDto.getDataNascimento());
         userRepository.save(newUser);
+
+        Endereco endereco = new Endereco();
+        endereco.setUser(newUser);
+        endereco.setUf(createUserDto.getUf());
+        endereco.setLocalidade(createUserDto.getLocalidade());
+        endereco.setBairro(createUserDto.getBairro());
+        endereco.setLogradouro(createUserDto.getLogradouro());
+        endereco.setCep(createUserDto.getCep());
+        endereco.setComplemento(createUserDto.getComplemento());
+        enderecoRepository.save(endereco);
     }
 
 
