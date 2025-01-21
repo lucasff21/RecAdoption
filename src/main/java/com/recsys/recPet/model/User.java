@@ -1,6 +1,7 @@
 package com.recsys.recPet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recsys.recPet.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,17 +12,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="user_")
+@Table(name = "user_")
 public class User implements UserDetails {
 
     @Id
@@ -45,20 +44,26 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Endereco endereco;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Adocao> adocaoList = new ArrayList<>();
+    @JsonManagedReference
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_adocao",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "adocao_id")
+    )
+    private Set<Adocao> adocoes = new HashSet<>();
+
+
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Questionario questionario;
 
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String authority = tipoUsuario.name();
-        return tipoUsuario == null ? new ArrayList<>() :
-                List.of(new SimpleGrantedAuthority(authority));
+        return tipoUsuario == null ? new HashSet<>() :
+                Set.of(new SimpleGrantedAuthority(authority));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.recsys.recPet.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,13 +23,12 @@ public class Adocao {
     private LocalDate dataAdocao;
     private String status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+
+    @JsonBackReference
+    @ManyToMany(mappedBy = "adocoes", fetch = FetchType.EAGER)
+    private Set<User> users = new HashSet<>();
+
 
     @OneToOne
     private Animal animal;
-
-
 }

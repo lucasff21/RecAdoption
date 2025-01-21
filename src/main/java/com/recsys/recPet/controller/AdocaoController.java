@@ -2,11 +2,14 @@ package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.AdocaoDTO;
 import com.recsys.recPet.model.Adocao;
+import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.AdocaoService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +21,15 @@ public class AdocaoController {
 
     @Autowired
     private AdocaoService adocaoService;
-
+    @Transactional
     @PostMapping
-    public ResponseEntity<Adocao> save(AdocaoDTO adocaoDTO){
+    public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user){
         Adocao adocao = new Adocao();
         BeanUtils.copyProperties(adocaoDTO, adocao);
-        Adocao adocaoCreated = adocaoService.update(adocao);
+        adocao.getUsers().add(user);
+        user.getAdocoes().add(adocao);
+
+        Adocao adocaoCreated = adocaoService.save(adocao);
         return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
     }
 
@@ -32,7 +38,7 @@ public class AdocaoController {
         Adocao adocao = new Adocao();
         BeanUtils.copyProperties(adocaoDTO, adocao);
         adocao.setId(id);
-        Adocao adocaoUpdate = adocaoService.save(adocao);
+        Adocao adocaoUpdate = adocaoService.update(adocao);
 
         return ResponseEntity.status(HttpStatus.OK).body(adocaoUpdate);
     }

@@ -48,11 +48,11 @@ public class SecurityConfiguration {
                         authz
                                 // Permitir acesso para ADOTANTE e ADMIN em rotas de questionário
                                 .requestMatchers(HttpMethod.GET, "/api/questionario/findall", "/api/questionario/{id}", "/users/findbyemail/{email}", "/users/{id}","/api/questionario/email/{email}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
-                                .requestMatchers(HttpMethod.POST,"/api/questionario" ).hasAnyAuthority("ADOTANTE", "ADMIN")
+                                .requestMatchers(HttpMethod.POST,"/api/questionario", "/api/adocao").hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.PUT,"/api/questionario/{id}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
 
 
-                                .requestMatchers(HttpMethod.GET, "/users/findall").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/users/findall", "/api/adocao").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/cachorro/create", "/api/cachorro/uploade-image").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/cachorro/{id}", "/users/{id}").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/cachorro", "/api/questionario/{id}", "/users/{id}", "/api/cachorro/delete/{fileName}").hasAuthority("ADMIN")

@@ -9,7 +9,6 @@ public record AdocaoDTO(
         Long id,
         LocalDate dataAdocao,
         String status,
-        User user,
         Animal animal
 ) {
 }
