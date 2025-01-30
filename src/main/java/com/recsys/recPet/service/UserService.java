@@ -63,7 +63,7 @@ public class UserService {
         User newUser = new User();
         newUser.setEmail(createUserDto.getEmail());
         newUser.setPassword(passwordEncoder.encode(createUserDto.getSenha()));
-        newUser.setTipoUsuario(TipoUsuario.ADOTANTE);
+        newUser.setTipoUsuario(TipoUsuario.ADMIN);
         newUser.setNome(createUserDto.getNome());
         newUser.setCpf(createUserDto.getCpf());
         newUser.setTelefone(createUserDto.getTelefone());

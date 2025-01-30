@@ -30,6 +30,12 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
         if (checkIfEndpointIsNotPublic(request)) {
             String token = recoveryToken(request);
+
+            if (token == null) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token não encontrado.");
+                return;
+            }
+
             if (token != null) {
                 try {
                     String subject = jwtTokenService.getSubjectFromToken(token);
@@ -44,6 +50,8 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
                     Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     System.out.println("AUTENTICADO: " + user.getEmail());
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou não autenticado.");
