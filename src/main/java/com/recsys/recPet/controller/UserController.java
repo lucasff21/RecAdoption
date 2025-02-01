@@ -5,12 +5,10 @@ import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,8 +16,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<RecoveryJwtTokenDto> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
@@ -42,12 +43,6 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(userUpdate);
 
-    }
-
-    @GetMapping("/findall")
-    public ResponseEntity<List<User>> findAll(){
-        List<User> userList = userService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(userList);
     }
 
     @GetMapping("/{id}")
