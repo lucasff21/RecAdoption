@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,14 +15,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="user_")
 public class User implements UserDetails {
 
     @Id
@@ -48,17 +46,17 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Adocao> adocaoList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Questionario questionario;
 
-
+    @CreatedDate
+    private LocalDate criadoEm;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String authority = tipoUsuario.name();
-        return tipoUsuario == null ? new ArrayList<>() :
-                List.of(new SimpleGrantedAuthority(authority));
+        return List.of(new SimpleGrantedAuthority(authority));
     }
 
     @Override
