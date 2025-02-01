@@ -1,8 +1,6 @@
 package com.recsys.recPet.service;
 
-import com.recsys.recPet.dto.CreateAdoptiveUserDTO;
-import com.recsys.recPet.dto.LoginUserDto;
-import com.recsys.recPet.dto.RecoveryJwtTokenDto;
+import com.recsys.recPet.dto.*;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.model.Endereco;
 import com.recsys.recPet.model.User;
@@ -10,33 +8,37 @@ import com.recsys.recPet.repository.EnderecoRepository;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.security.JwtTokenService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenService jwtTokenService;
+    private final JwtTokenService jwtTokenService;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    private final EnderecoRepository enderecoRepository;
+
+    public UserService(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService, UserRepository userRepository, PasswordEncoder passwordEncoder, EnderecoRepository enderecoRepository) {
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenService = jwtTokenService;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.enderecoRepository = enderecoRepository;
+    }
 
 
     public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
@@ -94,8 +96,18 @@ public class UserService {
         }
     }
 
-    public List<User> findAll(){
-        return userRepository.findAll();
+    public Page<UserResponseDTO> findAll(String query, TipoUsuario tipoUsuario, Pageable pageable){
+        Page<User> users;
+
+        if (query != null && !query.isEmpty()) {
+            users = userRepository.findByNomeContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query, pageable);
+        } else if (tipoUsuario != null) {
+            users = userRepository.findByTipoUsuario(tipoUsuario, pageable);
+        } else {
+            users = userRepository.findAll(pageable);
+        }
+
+        return users.map(user -> new UserResponseDTO(user));
     }
 
     public User findById(Long id){
