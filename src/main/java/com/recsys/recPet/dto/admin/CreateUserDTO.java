@@ -22,6 +22,6 @@ public class CreateUserDTO {
     @Size(min = 8, message = "A senha deve ter pelo menos 8 caracteres")
     public String senha;
 
-    @NotBlank(message = "Tipo é obrigatório")
+    @NotNull(message = "Tipo é obrigatório")
     public TipoUsuario tipo;
 }
