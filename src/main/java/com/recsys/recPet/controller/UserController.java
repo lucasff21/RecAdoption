@@ -23,10 +23,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<RecoveryJwtTokenDto> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<UserLoginResponseDTO> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
         RecoveryJwtTokenDto token = userService.authenticateUser(loginUserDto);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        UserResponseDTO user = userService.findByEmail(loginUserDto.getEmail());
+
+        UserLoginResponseDTO response = new UserLoginResponseDTO(user, token.token());
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/create")
     public ResponseEntity<Void> createUser(@Valid @RequestBody CreateAdoptiveUserDTO createUserDto) {
@@ -59,13 +68,11 @@ public class UserController {
 
     @GetMapping("/findbyemail/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email){
-        Optional<User> user = userService.findByEmail(email);
-
-        if (user.isEmpty()) {
+        try {
+            UserResponseDTO user = userService.findByEmail(email);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(user.get());
-
     }
 }

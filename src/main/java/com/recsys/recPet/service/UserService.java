@@ -42,11 +42,11 @@ public class UserService {
 
 
     public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
-        System.out.println("USUARIO CHEGANDO authenticateUser " + loginUserDto);
+        System.out.println("USUARIO CHEGANDO authenticateUser " + loginUserDto.getEmail());
 
         // Cria um objeto de autenticação com o email e a senha do usuário
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(loginUserDto.email(), loginUserDto.password());
+                new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword());
 
         // Autentica o usuário com as credenciais fornecidas
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
@@ -120,7 +120,9 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public Optional<User> findByEmail(String email){
-        return userRepository.findByEmail(email);
+    public UserResponseDTO findByEmail(String email){
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        return new UserResponseDTO(user);
     }
 }
