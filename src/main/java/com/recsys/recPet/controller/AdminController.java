@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AdminController {
 
     private final AdminService adminService;
@@ -33,19 +34,19 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/delete-user/{id}")
+    @DeleteMapping("/user/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         adminService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/change-role/{id}")
+    @PatchMapping("/role/{id}")
     public ResponseEntity<Void> updateRole(@PathVariable Long id, @RequestBody UpdateRoleDTO updateRoleDto) {
         adminService.updateUser(id, updateRoleDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/findall")
+    @GetMapping("/users")
     public Page<UserResponseDTO> findAll(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "role", required = false) TipoUsuario role,
