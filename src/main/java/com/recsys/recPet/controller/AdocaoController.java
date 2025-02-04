@@ -49,7 +49,6 @@ public class AdocaoController {
         Adocao adocaoCreated = adocaoService.save(adocao);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
-    } return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
     }
 
     @PutMapping("/{id}")
