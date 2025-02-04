@@ -2,11 +2,15 @@ package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.AdocaoDTO;
 import com.recsys.recPet.model.Adocao;
+import com.recsys.recPet.model.Animal;
+import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.AdocaoService;
+import com.recsys.recPet.service.CachorroService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +23,30 @@ public class AdocaoController {
     @Autowired
     private AdocaoService adocaoService;
 
-    @PostMapping
-    public ResponseEntity<Adocao> save(AdocaoDTO adocaoDTO){
+    @Autowired
+    private CachorroService cachorroService;
+
+    @PostMapping("/create")
+    public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) {
+
+        System.out.println("Usuário autenticado: " + user);
+
+
         Adocao adocao = new Adocao();
+
+        adocao.setUser(user);
+        Animal animal = cachorroService.findById(adocaoDTO.animalId());
+        if (animal == null) {
+            // Trate o erro ou lance uma exceção
+            throw new IllegalArgumentException("Animal não encontrado!");
+        }
+        adocao.setAnimal(animal);
+
+
         BeanUtils.copyProperties(adocaoDTO, adocao);
-        Adocao adocaoCreated = adocaoService.update(adocao);
+
+        Adocao adocaoCreated = adocaoService.save(adocao);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
     }
 

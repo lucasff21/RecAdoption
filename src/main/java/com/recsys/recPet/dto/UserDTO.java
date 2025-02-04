@@ -3,6 +3,7 @@ package com.recsys.recPet.dto;
 import com.recsys.recPet.enums.TipoUsuario;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 public record UserDTO(Long id,
@@ -12,5 +13,6 @@ public record UserDTO(Long id,
                       String telefone,
                       String genero,
                       LocalDate dataNascimento,
-                      String cpf) {
+                      String cpf,
+                      List<Long> adocoes) {
 }

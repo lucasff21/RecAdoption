@@ -1,5 +1,7 @@
 package com.recsys.recPet.dto;
 
+import java.util.List;
+
 public record CachorroDTO(String nome,
                           String idade,
                           String sexo,
@@ -12,7 +14,10 @@ public record CachorroDTO(String nome,
                           Boolean necessidadeCorrer,
                           Boolean quedaPelo,
                           Boolean tendeLatir,
-    String imagePath
+                          String imagePath,
+
+                                  List<Long>adocoes
+
 
 ) {
 }
