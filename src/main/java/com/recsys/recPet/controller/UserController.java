@@ -5,12 +5,10 @@ import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -18,14 +16,26 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
-    public ResponseEntity<RecoveryJwtTokenDto> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<UserLoginResponseDTO> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
         RecoveryJwtTokenDto token = userService.authenticateUser(loginUserDto);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        UserResponseDTO user = userService.findByEmail(loginUserDto.getEmail());
+
+        UserLoginResponseDTO response = new UserLoginResponseDTO(user, token.token());
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/create")
     public ResponseEntity<Void> createUser(@Valid @RequestBody CreateAdoptiveUserDTO createUserDto) {
@@ -44,12 +54,6 @@ public class UserController {
 
     }
 
-    @GetMapping("/findall")
-    public ResponseEntity<List<User>> findAll(){
-        List<User> userList = userService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(userList);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){
         User user = userService.findById(id);
@@ -64,13 +68,11 @@ public class UserController {
 
     @GetMapping("/findbyemail/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email){
-        Optional<User> user = userService.findByEmail(email);
-
-        if (user.isEmpty()) {
+        try {
+            UserResponseDTO user = userService.findByEmail(email);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(user.get());
-
     }
 }

@@ -2,16 +2,14 @@ package com.recsys.recPet.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDate;
 import java.time.Period;
-
-import com.recsys.recPet.helpers.CPF;
 
 @Getter
 @Setter
@@ -20,9 +18,8 @@ public class CreateAdoptiveUserDTO {
     @NotBlank(message = "Nome é obrigatório")
     public String nome;
 
-    @JsonProperty("cpf")
     @NotBlank(message = "CPF é obrigatório")
-    @Pattern(regexp = "\\d{11}", message = "CPF deve conter exatamente 11 dígitos")
+    @CPF(message = "CPF inválido")
     public String cpf;
 
     @NotBlank(message = "Gênero é obrigatório")
@@ -70,13 +67,5 @@ public class CreateAdoptiveUserDTO {
         if (dataNascimento == null) return false;
 
         return Period.between(dataNascimento, LocalDate.now()).getYears() >= 18;
-    }
-
-    @AssertTrue(message = "CPF inválido")
-    @JsonIgnore
-    public boolean isCpf() {
-        if (cpf == null) return false;
-
-        return CPF.validar(cpf);
     }
 }
