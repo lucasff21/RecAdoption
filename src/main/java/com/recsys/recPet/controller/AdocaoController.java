@@ -2,6 +2,7 @@ package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.AdocaoDTO;
 import com.recsys.recPet.model.Adocao;
+
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.AdocaoService;
@@ -22,7 +23,7 @@ public class AdocaoController {
 
     @Autowired
     private AdocaoService adocaoService;
-
+  
     @Autowired
     private CachorroService cachorroService;
 
@@ -48,6 +49,7 @@ public class AdocaoController {
         Adocao adocaoCreated = adocaoService.save(adocao);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
+    } return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
     }
 
     @PutMapping("/{id}")
@@ -55,7 +57,7 @@ public class AdocaoController {
         Adocao adocao = new Adocao();
         BeanUtils.copyProperties(adocaoDTO, adocao);
         adocao.setId(id);
-        Adocao adocaoUpdate = adocaoService.save(adocao);
+        Adocao adocaoUpdate = adocaoService.update(adocao);
 
         return ResponseEntity.status(HttpStatus.OK).body(adocaoUpdate);
     }
