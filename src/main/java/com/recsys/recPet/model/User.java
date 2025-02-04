@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 
 @Data
 @AllArgsConstructor
@@ -44,26 +46,22 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Endereco endereco;
 
-    @JsonManagedReference
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_adocao",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "adocao_id")
-    )
-    private Set<Adocao> adocoes = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<Adocao> adocoes;
 
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     private Questionario questionario;
+
+    @CreatedDate
+    private LocalDate criadoEm;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String authority = tipoUsuario.name();
-        return tipoUsuario == null ? new HashSet<>() :
-                Set.of(new SimpleGrantedAuthority(authority));
+        return List.of(new SimpleGrantedAuthority(authority));
     }
 
     @Override
@@ -90,4 +88,11 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", email=" + email + ", nome=" + nome + ", telefone=" + telefone
+                + ", endereco=" + (endereco != null ? endereco.getCep() : "sem endereço") + "]";
+    }
+
 }

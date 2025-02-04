@@ -28,4 +28,11 @@ public class Endereco {
     @JsonIgnore
     private User user;
 
+
+    @Override
+    public String toString() {
+        return "Endereco [cep=" + cep + ", logradouro=" + logradouro + ", complemento=" + complemento
+                + ", bairro=" + bairro + ", localidade=" + localidade + ", uf=" + uf + "]";
+    }
+
 }
