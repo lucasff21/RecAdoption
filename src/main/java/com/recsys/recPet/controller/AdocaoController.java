@@ -18,7 +18,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/adocao")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AdocaoController {
 
     @Autowired

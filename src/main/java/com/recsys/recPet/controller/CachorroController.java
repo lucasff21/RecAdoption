@@ -20,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/cachorro")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class CachorroController {
 
     @Autowired

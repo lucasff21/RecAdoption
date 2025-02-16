@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/questionario")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class QuestionarioController {
 
     @Autowired
