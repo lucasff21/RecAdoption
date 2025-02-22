@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.recsys</groupId>
 	<artifactId>recPet</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>recPet</name>
 	<description>pet recommendation system</description>
 	<properties>
