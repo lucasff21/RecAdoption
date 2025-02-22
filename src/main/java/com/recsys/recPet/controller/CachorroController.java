@@ -1,6 +1,6 @@
 package com.recsys.recPet.controller;
 
-import com.recsys.recPet.animals.Cachorro;
+import com.recsys.recPet.model.Cachorro;
 import com.recsys.recPet.dto.CachorroDTO;
 import com.recsys.recPet.service.CachorroService;
 import org.springframework.beans.BeanUtils;

@@ -1,6 +1,5 @@
-package com.recsys.recPet.animals;
+package com.recsys.recPet.model;
 
-import com.recsys.recPet.model.Animal;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.recsys.recPet.service;
 
-import com.recsys.recPet.animals.Cachorro;
+import com.recsys.recPet.model.Cachorro;
 import com.recsys.recPet.repository.CachorroRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
