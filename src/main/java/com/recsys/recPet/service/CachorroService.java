@@ -4,15 +4,12 @@ import com.recsys.recPet.animals.Cachorro;
 import com.recsys.recPet.repository.CachorroRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -24,11 +21,14 @@ import java.util.Optional;
 
 @Service
 public class CachorroService {
-    @Autowired
-    private CachorroRepository cachorroRepository;
+    private final CachorroRepository cachorroRepository;
 
     @Value("${file.path}")
     private String filePath;
+
+    public CachorroService(CachorroRepository cachorroRepository) {
+        this.cachorroRepository = cachorroRepository;
+    }
 
     public List<Cachorro> findAll() {
         return cachorroRepository.findAll();

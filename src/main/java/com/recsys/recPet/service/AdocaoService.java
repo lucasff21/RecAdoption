@@ -3,7 +3,6 @@ package com.recsys.recPet.service;
 import com.recsys.recPet.model.Adocao;
 import com.recsys.recPet.repository.AdocaoRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.Optional;
 
 @Service
 public class AdocaoService {
-    @Autowired
-    private AdocaoRepository adocaoRepository;
+    private final AdocaoRepository adocaoRepository;
+
+    public AdocaoService(AdocaoRepository adocaoRepository) {
+        this.adocaoRepository = adocaoRepository;
+    }
 
     public Adocao save(Adocao adocao){
         return adocaoRepository.save(adocao);

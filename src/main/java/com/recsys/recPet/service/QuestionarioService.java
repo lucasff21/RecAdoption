@@ -3,7 +3,6 @@ package com.recsys.recPet.service;
 import com.recsys.recPet.model.Questionario;
 import com.recsys.recPet.repository.QuestionarioRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +11,11 @@ import java.util.Optional;
 @Service
 public class QuestionarioService {
 
-    @Autowired
-    private QuestionarioRepository questionarioRepository;
+    private final QuestionarioRepository questionarioRepository;
+
+    public QuestionarioService(QuestionarioRepository questionarioRepository) {
+        this.questionarioRepository = questionarioRepository;
+    }
 
     public Questionario save(Questionario questionario) {
         return questionarioRepository.save(questionario);

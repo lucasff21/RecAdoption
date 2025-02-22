@@ -6,7 +6,6 @@ import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.QuestionarioService;
 import com.recsys.recPet.service.UserService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,11 +17,14 @@ import java.util.List;
 @RequestMapping("/api/questionario")
 public class QuestionarioController {
 
-    @Autowired
-    private QuestionarioService questionarioService;
+    private final QuestionarioService questionarioService;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public QuestionarioController(QuestionarioService questionarioService, UserService userService) {
+        this.questionarioService = questionarioService;
+        this.userService = userService;
+    }
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody QuestionarioDTO questionarioDTO,

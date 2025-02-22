@@ -8,7 +8,6 @@ import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.AdocaoService;
 import com.recsys.recPet.service.CachorroService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,11 +19,14 @@ import java.util.List;
 @RequestMapping("/api/adocao")
 public class AdocaoController {
 
-    @Autowired
-    private AdocaoService adocaoService;
+    private final AdocaoService adocaoService;
   
-    @Autowired
-    private CachorroService cachorroService;
+    private final CachorroService cachorroService;
+
+    public AdocaoController(AdocaoService adocaoService, CachorroService cachorroService) {
+        this.adocaoService = adocaoService;
+        this.cachorroService = cachorroService;
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) {

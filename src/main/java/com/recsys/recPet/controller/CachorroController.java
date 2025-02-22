@@ -4,7 +4,6 @@ import com.recsys.recPet.animals.Cachorro;
 import com.recsys.recPet.dto.CachorroDTO;
 import com.recsys.recPet.service.CachorroService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,8 +21,11 @@ import java.util.List;
 @RequestMapping("/api/cachorro")
 public class CachorroController {
 
-    @Autowired
-    private CachorroService cachorroService;
+    private final CachorroService cachorroService;
+
+    public CachorroController(CachorroService cachorroService) {
+        this.cachorroService = cachorroService;
+    }
 
     @GetMapping("/findall")
     public ResponseEntity<List<Cachorro>> findAll() {
