@@ -12,18 +12,11 @@ RUN mvn clean install -DskipTests
 
 FROM openjdk:17-jdk-slim
 
-RUN mkdir -p /tmp/certs
 
-RUN if [ -f /etc/secrets/ca.pem ]; then \
-        cp /etc/secrets/ca.pem /tmp/certs/; \
-    fi && \
-    chmod 644 /tmp/certs/ca.pem && \
-    keytool -importcert -noprompt \
-            -keystore $JAVA_HOME/lib/security/cacerts \
-            -storepass changeit \
-            -file /tmp/certs/ca.pem \
-            -alias render-ca && \
-    rm -rf /tmp/certs
+RUN mkdir -p /usr/local/share/ca-certificates
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 EXPOSE 8080
 
