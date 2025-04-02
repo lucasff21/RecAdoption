@@ -12,18 +12,11 @@ RUN mvn clean install -DskipTests
 
 FROM openjdk:17-jdk-slim
 
-RUN mkdir -p /etc/secrets && \
-    chmod 755 /etc/secrets
-
-COPY src/main/resources/certs/ca.pem /etc/secrets/
-
-RUN chmod 644 /etc/secrets/ca.pem && \
-    keytool -importcert -noprompt \
+RUN keytool -importcert -noprompt \
             -keystore $JAVA_HOME/lib/security/cacerts \
             -storepass changeit \
             -file /etc/secrets/ca.pem \
-            -alias render-ca && \
-    rm -rf /var/lib/apt/lists/*
+            -alias render-ca \
 
 EXPOSE 8080
 
