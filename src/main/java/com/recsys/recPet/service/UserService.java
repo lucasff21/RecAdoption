@@ -6,7 +6,7 @@ import com.recsys.recPet.model.Endereco;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.EnderecoRepository;
 import com.recsys.recPet.repository.UserRepository;
-import com.recsys.recPet.security.JwtTokenService;
+import com.recsys.recPet.security.JwtTokenProvider;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,15 +16,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
-import java.util.Optional;
-
 @Service
 public class UserService {
 
     private final AuthenticationManager authenticationManager;
 
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     private final UserRepository userRepository;
 
@@ -32,9 +29,9 @@ public class UserService {
 
     private final EnderecoRepository enderecoRepository;
 
-    public UserService(AuthenticationManager authenticationManager, JwtTokenService jwtTokenService, UserRepository userRepository, PasswordEncoder passwordEncoder, EnderecoRepository enderecoRepository) {
+    public UserService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, EnderecoRepository enderecoRepository) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenService = jwtTokenService;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.enderecoRepository = enderecoRepository;
@@ -54,7 +51,7 @@ public class UserService {
         // Obtém o objeto UserDetails do usuário autenticado
         User userDetails = (User) authentication.getPrincipal();
 
-        String token = jwtTokenService.generateToken(userDetails);
+        String token = jwtTokenProvider.generateToken(userDetails);
 
         // Gera um token JWT para o usuário autenticado
         return new RecoveryJwtTokenDto(token);
