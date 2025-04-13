@@ -23,9 +23,6 @@ import java.util.Optional;
 public class CachorroService {
     private final CachorroRepository cachorroRepository;
 
-    @Value("${file.path}")
-    private String filePath;
-
     public CachorroService(CachorroRepository cachorroRepository) {
         this.cachorroRepository = cachorroRepository;
     }
@@ -56,48 +53,4 @@ public class CachorroService {
         Cachorro cachorro = findById(id);
         cachorroRepository.delete(cachorro);
     }
-
-    public String uploadFile(MultipartFile file) {
-        String fileName = System.currentTimeMillis() + "_" + StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-
-        if (fileName.contains("..")) {
-            throw new IllegalArgumentException("O nome do arquivo contém sequência inválida: " + fileName);
-        }
-
-        try {
-            // Garantir que o diretório existe
-            Path destPath = Paths.get(this.filePath).resolve(fileName);
-            Files.createDirectories(destPath.getParent());
-
-            // Salvar o arquivo
-            file.transferTo(destPath.toFile());
-
-            return fileName; // Retornar apenas o nome do arquivo
-        } catch (IOException e) {
-            throw new RuntimeException("Erro ao salvar o arquivo: " + e.getMessage(), e);
-        }
-    }
-
-    public byte[] downloadFile(String fileName) {
-        try{
-            Path filePath = Paths.get(this.filePath + fileName);
-            return Files.readAllBytes(filePath);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading file", e);
-        }
-    }
-
-    public String deleteFile(String fileName) throws IOException {
-        Path filePath = Paths.get(this.filePath + fileName);
-
-        if (Files.exists(filePath)) {
-            Files.delete(filePath);
-            return fileName + " removed successfully.";
-        } else {
-            throw new NoSuchFileException(fileName);
-        }
-    }
-
-
-
 }
