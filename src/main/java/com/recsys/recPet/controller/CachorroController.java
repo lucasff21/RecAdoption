@@ -3,28 +3,28 @@ package com.recsys.recPet.controller;
 import com.recsys.recPet.model.Cachorro;
 import com.recsys.recPet.dto.CachorroDTO;
 import com.recsys.recPet.service.CachorroService;
+import com.recsys.recPet.service.ImageService;
+import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cachorro")
 public class CachorroController {
 
     private final CachorroService cachorroService;
+    private final ImageService imageService;
 
-    public CachorroController(CachorroService cachorroService) {
+    public CachorroController(CachorroService cachorroService, ImageService imageService) {
         this.cachorroService = cachorroService;
+        this.imageService = imageService;
     }
 
     @GetMapping("/findall")
@@ -39,13 +39,21 @@ public class CachorroController {
         return ResponseEntity.status(HttpStatus.OK).body(cachorro);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Cachorro> save(@RequestBody CachorroDTO cachorroDTO) {
-        Cachorro cachorro = new Cachorro();
-        BeanUtils.copyProperties(cachorroDTO, cachorro);
-        Cachorro cachorroCreated = cachorroService.save(cachorro);
+    @PostMapping(value = "/create", consumes = "multipart/form-data")
+    public ResponseEntity<? extends Object> save(
+            @Valid @RequestPart CachorroDTO cachorroDTO,
+            @RequestPart("imagem") MultipartFile imagem
+    ) throws IOException {
+        Cachorro cachorro = cachorroDTO.toEntity();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(cachorroCreated);
+        if (!imagem.isEmpty()) {
+            Map image = this.imageService.uploadImage(imagem, "pets/adoption");
+            cachorro.setImagePath((String) image.get("secure_url"));
+        }
+
+        cachorroService.save(cachorro);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(cachorro);
     }
 
     @PutMapping("/{id}")
@@ -64,58 +72,9 @@ public class CachorroController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("/upload-image")
-    public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file) {
-        try {
-            if (file.isEmpty()) {
-                return new ResponseEntity<>("O arquivo está vazio.", HttpStatus.BAD_REQUEST);
-            }
-
-            String contentType = file.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                return new ResponseEntity<>("O arquivo não é uma imagem válida.", HttpStatus.BAD_REQUEST);
-            }
-
-            String fileName = cachorroService.uploadFile(file);
-            return new ResponseEntity<>(fileName, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Erro no upload: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Erro ao fazer upload: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-
     @DeleteMapping("/delete/{fileName}")
     public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        try {
-            String result = cachorroService.deleteFile(fileName);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (NoSuchFileException e) {
-            return new ResponseEntity<>("File not found: " + fileName, HttpStatus.NOT_FOUND);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Error deleting file: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/download-image")
-    public ResponseEntity<byte[]> getProfileImage(@RequestParam String fileName) {
-        try {
-            byte[] imageData = cachorroService.downloadFile(fileName);
-            String fileType = Files.probeContentType(Paths.get(fileName));
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.parseMediaType(fileType));
-
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(imageData);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(null);
-        }
+       return ResponseEntity.ok("File deleted successfully");
     }
 }
 
