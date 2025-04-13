@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 @Service
-public class JwtTokenService {
+public class JwtTokenProvider {
 
     @Value("${jwt.security.key}")
     private String SECRET_KEY;
