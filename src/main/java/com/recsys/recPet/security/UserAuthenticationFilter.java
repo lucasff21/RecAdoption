@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtTokenService jwtTokenService;
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private UserRepository userRepository;
@@ -38,7 +38,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
             if (token != null) {
                 try {
-                    String subject = jwtTokenService.getSubjectFromToken(token);
+                    String subject = jwtTokenProvider.getSubjectFromToken(token);
                     System.out.println("Subject extraído do token: " + subject);
 
                     // Verifique se o email está correto
