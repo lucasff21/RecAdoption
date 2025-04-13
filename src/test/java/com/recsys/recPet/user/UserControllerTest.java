@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,12 +18,14 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@Transactional
 class UserControllerTest {
 
     @Autowired
@@ -59,7 +62,7 @@ class UserControllerTest {
                 .andExpect(status().isCreated());
 
         Optional<User> user = userRepository.findByEmail("maria@gmail.com");
-
+        assertTrue(user.isPresent());
         assertEquals(TipoUsuario.ADOTANTE, user.get().getTipoUsuario());
     }
 
@@ -85,7 +88,6 @@ class UserControllerTest {
         mockMvc.perform(post("/users/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
-                .andExpect(status().isBadRequest())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.senha").value("A senha deve ter pelo menos 8 caracteres"))
                 .andExpect(jsonPath("$.dataNascimento").value("Usuário deve ser maior de idade"))
