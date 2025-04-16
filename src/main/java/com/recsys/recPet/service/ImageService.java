@@ -26,8 +26,7 @@ public class ImageService {
     @Value("${cloudinary.api.secret}")
     private String apiSecret;
 
-    @Value("${cloudinary.upload.preset}")
-    private String uploadPreset;
+    private String uploadPreset ="pet_uploads";
 
     private final RestTemplate restTemplate;
 
@@ -57,6 +56,8 @@ public class ImageService {
         String url = "https://api.cloudinary.com/v1_1/" + cloudName + "/image/upload";
         ResponseEntity<Map> response = restTemplate.exchange(
                 url, HttpMethod.POST, requestEntity, Map.class);
+
+        System.out.println("Response from Cloudinary: " + response.getBody());
 
         return response.getBody();
     }

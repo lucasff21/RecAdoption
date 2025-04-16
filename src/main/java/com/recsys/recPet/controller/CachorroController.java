@@ -41,13 +41,13 @@ public class CachorroController {
 
     @PostMapping(value = "/create", consumes = "multipart/form-data")
     public ResponseEntity<? extends Object> save(
-            @Valid @RequestPart CachorroDTO cachorroDTO,
-            @RequestPart("imagem") MultipartFile imagem
+            @Valid @ModelAttribute CachorroDTO cachorroDTO
+    //        @RequestPart("imagem") MultipartFile imagem
     ) throws IOException {
         Cachorro cachorro = cachorroDTO.toEntity();
 
-        if (!imagem.isEmpty()) {
-            Map image = this.imageService.uploadImage(imagem, "pets/adoption");
+        if (!cachorroDTO.getImagem().isEmpty()) {
+            Map image = this.imageService.uploadImage(cachorroDTO.getImagem(), "pets/adoption");
             cachorro.setImagePath((String) image.get("secure_url"));
         }
 

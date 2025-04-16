@@ -25,15 +25,12 @@ public class CachorroDTO {
     private String idade;
 
     @NotNull(message = "Sexo não pode ser nulo")
-    @Enumerated(EnumType.STRING)
     private Sexo sexo;
 
     @NotNull(message = "Porte não pode ser nulo")
-    @Enumerated(EnumType.STRING)
     private Porte porte;
 
     @NotNull(message = "Pelagem não pode ser nula")
-    @Enumerated(EnumType.STRING)
     private Pelagem pelagem;
 
     @NotNull(message = "Campo 'ideal para casa' não pode ser nulo")
@@ -63,9 +60,9 @@ public class CachorroDTO {
         Cachorro cachorro = new Cachorro();
         cachorro.setNome(this.nome);
         cachorro.setIdade(this.idade);
-        cachorro.setSexo(this.sexo.toString());
-        cachorro.setPorte(this.porte.toString());
-        cachorro.setPelagem(this.pelagem.toString());
+        cachorro.setSexo(this.sexo.name());
+        cachorro.setPorte(this.porte.name());
+        cachorro.setPelagem(this.pelagem.name());
         cachorro.setIdealCasa(this.idealCasa);
         cachorro.setGostaCrianca(this.gostaCrianca);
         cachorro.setCaoGuarda(this.caoGuarda);
