@@ -5,11 +5,11 @@ import com.recsys.recPet.dto.CachorroDTO;
 import com.recsys.recPet.service.CachorroService;
 import com.recsys.recPet.service.ImageService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +21,8 @@ public class CachorroController {
 
     private final CachorroService cachorroService;
     private final ImageService imageService;
+
+    Logger logger = org.slf4j.LoggerFactory.getLogger(CachorroController.class);
 
     public CachorroController(CachorroService cachorroService, ImageService imageService) {
         this.cachorroService = cachorroService;
@@ -40,13 +42,11 @@ public class CachorroController {
     }
 
     @PostMapping(value = "/create", consumes = "multipart/form-data")
-    public ResponseEntity<? extends Object> save(
-            @Valid @ModelAttribute CachorroDTO cachorroDTO
-    //        @RequestPart("imagem") MultipartFile imagem
-    ) throws IOException {
+    public ResponseEntity<? extends Object> save(@Valid @ModelAttribute CachorroDTO cachorroDTO) throws IOException {
         Cachorro cachorro = cachorroDTO.toEntity();
 
         if (!cachorroDTO.getImagem().isEmpty()) {
+            logger.info("Uploading imagem..");
             Map image = this.imageService.uploadImage(cachorroDTO.getImagem(), "pets/adoption");
             cachorro.setImagePath((String) image.get("secure_url"));
         }

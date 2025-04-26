@@ -1,5 +1,6 @@
 package com.recsys.recPet.service;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
@@ -26,9 +27,11 @@ public class ImageService {
     @Value("${cloudinary.api.secret}")
     private String apiSecret;
 
-    private String uploadPreset ="pet_uploads";
+    private final String uploadPreset ="pet_uploads";
 
     private final RestTemplate restTemplate;
+
+    Logger logger = org.slf4j.LoggerFactory.getLogger(ImageService.class);
 
     public ImageService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -57,7 +60,7 @@ public class ImageService {
         ResponseEntity<Map> response = restTemplate.exchange(
                 url, HttpMethod.POST, requestEntity, Map.class);
 
-        System.out.println("Response from Cloudinary: " + response.getBody());
+        logger.info("Response from Cloudinary: {}", response.getBody());
 
         return response.getBody();
     }
