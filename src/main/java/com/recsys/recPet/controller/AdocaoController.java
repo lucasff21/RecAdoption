@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -30,25 +32,16 @@ public class AdocaoController {
 
     @PostMapping("/create")
     public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) {
-
-        System.out.println("Usuário autenticado: " + user);
-
-
         Adocao adocao = new Adocao();
-
         adocao.setUser(user);
+        adocao.setDataAdocao(LocalDate.now());
         Animal animal = cachorroService.findById(adocaoDTO.animalId());
         if (animal == null) {
-            // Trate o erro ou lance uma exceção
             throw new IllegalArgumentException("Animal não encontrado!");
         }
         adocao.setAnimal(animal);
-
-
         BeanUtils.copyProperties(adocaoDTO, adocao);
-
         Adocao adocaoCreated = adocaoService.save(adocao);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
     }
 
