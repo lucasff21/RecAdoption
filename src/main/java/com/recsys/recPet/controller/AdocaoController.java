@@ -1,6 +1,7 @@
 package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.AdocaoDTO;
+import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
 
 import com.recsys.recPet.model.Animal;
@@ -14,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -35,6 +35,7 @@ public class AdocaoController {
         Adocao adocao = new Adocao();
         adocao.setUser(user);
         adocao.setDataAdocao(LocalDate.now());
+        adocao.setStatus(AdocaoStatus.PENDENTE);
         Animal animal = cachorroService.findById(adocaoDTO.animalId());
         if (animal == null) {
             throw new IllegalArgumentException("Animal não encontrado!");
