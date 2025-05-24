@@ -1,0 +1,12 @@
+ALTER TABLE adocao
+    ALTER COLUMN animal_id SET NOT NULL;
+
+ALTER TABLE adocao
+DROP
+COLUMN status;
+
+ALTER TABLE adocao
+    ADD status ADOCAO_STATUS;
+
+ALTER TABLE adocao
+    ALTER COLUMN user_id SET NOT NULL;

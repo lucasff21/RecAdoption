@@ -1,0 +1,5 @@
+ALTER TABLE adocao
+    ALTER COLUMN animal_id SET NOT NULL;
+
+ALTER TABLE adocao
+    ALTER COLUMN user_id SET NOT NULL;
