@@ -25,7 +25,6 @@ public class Animal {
     private String porte;
     private String pelagem;
     private String imagePath;
-    //private String tipoAnimal;
 
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
     @JsonIgnore

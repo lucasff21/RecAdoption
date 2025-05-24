@@ -18,15 +18,18 @@ import java.util.Arrays;
 @Component
 public class UserAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserAuthenticationFilter(JwtTokenProvider jwtTokenProvider, UserRepository userRepository) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.userRepository = userRepository;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("CHEGOU: " + request.getRequestURI());
+        System.out.println("Rota: " + request.getRequestURI());
 
         if (checkIfEndpointIsNotPublic(request)) {
             String token = recoveryToken(request);
@@ -36,29 +39,24 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if (token != null) {
-                try {
-                    String subject = jwtTokenProvider.getSubjectFromToken(token);
-                    System.out.println("Subject extraído do token: " + subject);
+            try {
+                String subject = jwtTokenProvider.getSubjectFromToken(token);
 
-                    // Verifique se o email está correto
-                    User user = userRepository.findByEmail(subject)
-                            .orElseThrow(() -> new RuntimeException("User not found"));
-
-                    System.out.println("Usuário encontrado: " + user.getEmail());
-
-                    Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                    System.out.println("AUTENTICADO: " + user.getEmail());
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou não autenticado.");
+                if (subject == null) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido.");
                     return;
                 }
-            } else {
-                System.out.println("Token não encontrado no cabeçalho.");
+
+                User user = userRepository.findByEmail(subject)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+
+                Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println("AUTENTICADO: " + user.getEmail());
+
+            } catch (Exception e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou não autenticado.");
+                return;
             }
         }
 
@@ -69,7 +67,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         System.out.println("Authorization Header: " + authorizationHeader);
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            return authorizationHeader.substring(7);  // Remove o prefixo "Bearer "
+            return authorizationHeader.substring(7);
         }
         return null;
     }

@@ -1,7 +1,6 @@
 package com.recsys.recPet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recsys.recPet.enums.TipoUsuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Set;
 
