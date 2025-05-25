@@ -1,30 +1,23 @@
 package com.recsys.recPet.service;
 
+import com.recsys.recPet.dto.cachorro.CachorroUpdateDTO;
 import com.recsys.recPet.model.Cachorro;
 import com.recsys.recPet.repository.CachorroRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
-
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map;
 
 @Service
 public class CachorroService {
     private final CachorroRepository cachorroRepository;
+    private final ImageService imageService;
 
-    public CachorroService(CachorroRepository cachorroRepository) {
+    public CachorroService(CachorroRepository cachorroRepository, ImageService imageService) {
         this.cachorroRepository = cachorroRepository;
+        this.imageService = imageService;
     }
 
     public List<Cachorro> findAll() {
@@ -36,17 +29,36 @@ public class CachorroService {
                 .orElseThrow(() -> new EntityNotFoundException("Animal não encontrado"));
     }
 
-    public Cachorro save(Cachorro cachorro) {
-        return cachorroRepository.save(cachorro);
+    public void save(Cachorro cachorro) {
+        cachorroRepository.save(cachorro);
     }
 
-    public Cachorro update(@NotNull Cachorro cachorro) {
-        Optional<Cachorro> cachorroOptional = cachorroRepository.findById(cachorro.getId());
-        if (cachorroOptional.isPresent()) {
-            return cachorroRepository.save(cachorro);
-        } else {
-            throw new EntityNotFoundException("Animal não encontrado");
+    public Cachorro update(@NotNull CachorroUpdateDTO cachorroDTO, Long id) throws IOException {
+        Cachorro cachorro = cachorroRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Animal não encontrado"));
+
+        cachorroDTO.updateEntity(cachorro);
+
+        if (cachorroDTO.getNovaImagem() != null && !cachorroDTO.getNovaImagem().isEmpty()) {
+            try {
+                Map image = this.imageService.uploadImage(
+                        cachorroDTO.getNovaImagem(),
+                        "pets/adoption"
+                );
+
+                if (cachorro.getImagePath() != null) {
+                    this.imageService.delete(cachorro.getImagePath());
+                }
+
+                String newImageUrl = (String) image.get("secure_url");
+
+                cachorro.setImagePath(newImageUrl);
+            } catch (Exception e) {
+                throw new IOException("Falha ao atualizar imagem: " + e.getMessage(), e);
+            }
         }
+
+        return cachorroRepository.save(cachorro);
     }
 
     public void delete(Long id) {

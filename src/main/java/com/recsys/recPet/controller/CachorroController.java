@@ -1,12 +1,12 @@
 package com.recsys.recPet.controller;
 
+import com.recsys.recPet.dto.cachorro.CachorroUpdateDTO;
 import com.recsys.recPet.model.Cachorro;
-import com.recsys.recPet.dto.CachorroDTO;
+import com.recsys.recPet.dto.cachorro.CachorroDTO;
 import com.recsys.recPet.service.CachorroService;
 import com.recsys.recPet.service.ImageService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -57,13 +57,13 @@ public class CachorroController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Cachorro> update(@PathVariable Long id, @RequestBody CachorroDTO cachorroDTO) {
-        Cachorro cachorro = new Cachorro();
-        BeanUtils.copyProperties(cachorroDTO, cachorro);
-        cachorro.setId(id);
-        Cachorro cachorroUpdate = cachorroService.update(cachorro);
-
-        return ResponseEntity.status(HttpStatus.OK).body(cachorroUpdate);
+    public ResponseEntity<Cachorro> update(@Valid @PathVariable Long id, @ModelAttribute CachorroUpdateDTO cachorroDTO) throws IOException {
+        try {
+            Cachorro cachorroUpdate = cachorroService.update(cachorroDTO, id);
+            return ResponseEntity.status(HttpStatus.OK).body(cachorroUpdate);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
