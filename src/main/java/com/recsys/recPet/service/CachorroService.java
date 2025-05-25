@@ -39,7 +39,7 @@ public class CachorroService {
 
         cachorroDTO.updateEntity(cachorro);
 
-        if (cachorroDTO.getNovaImagem() != null && !cachorroDTO.getNovaImagem().isEmpty()) {
+        if (cachorroDTO.getNovaImagem() != null) {
             try {
                 Map image = this.imageService.uploadImage(
                         cachorroDTO.getNovaImagem(),

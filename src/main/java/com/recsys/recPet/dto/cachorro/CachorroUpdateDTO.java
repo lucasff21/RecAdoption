@@ -4,9 +4,9 @@ import com.recsys.recPet.enums.pet.Pelagem;
 import com.recsys.recPet.enums.pet.Porte;
 import com.recsys.recPet.enums.pet.Sexo;
 import com.recsys.recPet.model.Cachorro;
+import lombok.AllArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.*;
-import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
 public class CachorroUpdateDTO {
     @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
     private String nome;

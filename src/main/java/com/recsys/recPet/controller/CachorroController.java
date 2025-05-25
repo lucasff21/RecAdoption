@@ -56,8 +56,11 @@ public class CachorroController {
         return ResponseEntity.status(HttpStatus.CREATED).body(cachorro);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Cachorro> update(@Valid @PathVariable Long id, @ModelAttribute CachorroUpdateDTO cachorroDTO) throws IOException {
+    @PutMapping(value ="/{id}")
+    public ResponseEntity<Cachorro> update(
+            @PathVariable Long id,
+            @Valid @ModelAttribute CachorroUpdateDTO cachorroDTO
+    ) throws IOException {
         try {
             Cachorro cachorroUpdate = cachorroService.update(cachorroDTO, id);
             return ResponseEntity.status(HttpStatus.OK).body(cachorroUpdate);

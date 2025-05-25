@@ -1,11 +1,9 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.cachorro;
 
 import com.recsys.recPet.enums.pet.Pelagem;
 import com.recsys.recPet.enums.pet.Porte;
 import com.recsys.recPet.enums.pet.Sexo;
 import com.recsys.recPet.model.Cachorro;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
