@@ -11,16 +11,17 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+
 @Service
 public class JwtTokenProvider {
 
-    @Value("${jwt.security.key}")
+    @Value("${JWT_SECURITY_KEY}")
     private String SECRET_KEY;
 
-    @Value("${jwt.security.issuer}")
+    @Value("${JWT_SECURITY_ISSUER}")
     private String ISSUER;
 
-    @Value("${jwt.security.expiration.hours}")
+    @Value("${JWT_SECURITY_EXPIRATION_HOURS}")
     private Integer EXPIRATION_TIME;
 
     public String generateToken(User user) {
