@@ -10,17 +10,21 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "adocoes")
 public class Adocao {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate dataAdocao;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
     @JdbcType(PostgreSQLEnumJdbcType.class)
