@@ -20,6 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -58,7 +61,7 @@ public class CachorroControllerTest {
                         .multipart(HttpMethod.POST, "/api/cachorro/create")
                         .file(imagem)
                         .param("nome", "Rex")
-                        .param("idade", "2 anos")
+                        .param("idade", "2023-01-02")
                         .param("sexo", "MACHO")
                         .param("porte", "MEDIO")
                         .param("pelagem", "CURTA")
@@ -79,7 +82,7 @@ public class CachorroControllerTest {
 
         assertNotNull(responseCachorro.getId());
         assertEquals("Rex", responseCachorro.getNome());
-        assertEquals("2 anos", responseCachorro.getIdade());
+        assertEquals("2023-01-02", responseCachorro.getDataNascimentoAproximada().toString());
         assertEquals(Sexo.MACHO.toString(), responseCachorro.getSexo());
         assertEquals(Porte.MEDIO.toString(), responseCachorro.getPorte());
         assertEquals("http://test-image.com", responseCachorro.getImagePath());
@@ -99,7 +102,7 @@ public class CachorroControllerTest {
 
         Cachorro cachorroTeste = new Cachorro();
         cachorroTeste.setNome("Luna");
-        cachorroTeste.setIdade("2 anos");
+        cachorroTeste.setDataNascimentoAproximada(LocalDate.of(2023, Calendar.FEBRUARY, 2));
         cachorroTeste.setSexo(Sexo.FEMEA.name());
         cachorroTeste.setPorte(Porte.PEQUENO.name());
         cachorroTeste.setPelagem("LONGA");
