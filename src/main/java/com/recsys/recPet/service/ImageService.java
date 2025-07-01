@@ -126,7 +126,7 @@ public class ImageService {
         restTemplate.postForEntity(url, requestEntity, Void.class);
     }
 
-    private String extrairPublicIdCloudinaryUrl(String cloudinaryUrl) {
+    public String extrairPublicIdCloudinaryUrl(String cloudinaryUrl) {
 
         int posicaoUpload = cloudinaryUrl.indexOf("/upload/") + 8;
 
