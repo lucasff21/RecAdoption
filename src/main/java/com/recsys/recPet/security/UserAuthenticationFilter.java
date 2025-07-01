@@ -55,7 +55,7 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
                 System.out.println("AUTENTICADO: " + user.getEmail());
 
             } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido ou não autenticado.");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro interno no servidor");
                 return;
             }
         }
