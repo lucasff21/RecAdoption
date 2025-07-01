@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto.cachorro;
+package com.recsys.recPet.dto.animal;
 
 import com.recsys.recPet.enums.pet.Pelagem;
 import com.recsys.recPet.enums.pet.Porte;
@@ -11,6 +11,8 @@ import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -19,8 +21,8 @@ public class CachorroDTO {
     @Size(max = 100, message = "Nome deve ter no máximo 100 caracteres")
     private String nome;
 
-    @NotBlank(message = "Idade não pode ser vazia")
-    private String idade;
+    @NotBlank(message = "Data de nascimento não pode ser vazia")
+    private LocalDate dataNascimentoAproximada;
 
     @NotNull(message = "Sexo não pode ser nulo")
     private Sexo sexo;
@@ -57,7 +59,7 @@ public class CachorroDTO {
     public Cachorro toEntity() {
         Cachorro cachorro = new Cachorro();
         cachorro.setNome(this.nome);
-        cachorro.setIdade(this.idade);
+        cachorro.setDataNascimentoAproximada(this.dataNascimentoAproximada);
         cachorro.setSexo(this.sexo.name());
         cachorro.setPorte(this.porte.name());
         cachorro.setPelagem(this.pelagem.name());
