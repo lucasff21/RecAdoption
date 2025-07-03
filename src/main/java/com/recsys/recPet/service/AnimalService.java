@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -120,6 +121,7 @@ public class AnimalService {
     public Animal save(Animal animal) {
         return animalRepository.save(animal);
     }
+
     @Transactional
     public Animal update(@NotNull AnimalUpdateDTO animalDTO, Long id) throws IOException {
         Animal animal = animalRepository.findById(id)
@@ -141,7 +143,7 @@ public class AnimalService {
                     AnimalCaracteristica novaAssociacao = new AnimalCaracteristica();
                     novaAssociacao.setAnimal(animal);
                     novaAssociacao.setCaracteristica(carac);
-                    novaAssociacao.setCreatedAt(java.time.OffsetDateTime.now());
+                    novaAssociacao.setCreatedAt(LocalDateTime.now());
                     if (animal.getId() != null && carac.getId() != null) {
                         novaAssociacao.setId(new AnimalCaracteristicaId(animal.getId(), carac.getId()));
                     }
@@ -161,18 +163,18 @@ public class AnimalService {
 
         MultipartFile imagemFile = animalDTO.getNovaImagem();
         if (imagemFile != null && !imagemFile.isEmpty()) {
-            if (animal.getImagePath() != null && !animal.getImagePath().isEmpty()) {
+            if (animal.getImagemPath() != null && !animal.getImagemPath().isEmpty()) {
                 try {
-                    String oldFileName = imageService.extrairPublicIdCloudinaryUrl(animal.getImagePath());
+                    String oldFileName = imageService.extrairPublicIdCloudinaryUrl(animal.getImagemPath());
                     if (oldFileName != null) {
                         imageService.delete(oldFileName);
                     }
                 } catch (Exception e) {
-                    System.err.println("Erro ao excluir imagem antiga: " + e.getMessage());
+                    throw new IOException("Erro ao excluir a imagem antiga: " + e.getMessage(), e);
                 }
             }
             Map<?, ?> image = this.imageService.uploadImage(imagemFile, "pets/adoption");
-            animal.setImagePath((String) image.get("secure_url"));
+            animal.setImagemPath((String) image.get("secure_url"));
         }
 
         return animalRepository.save(animal);

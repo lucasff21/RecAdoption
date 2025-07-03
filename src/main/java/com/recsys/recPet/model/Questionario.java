@@ -27,7 +27,7 @@ public class Questionario {
     private Boolean tendeLatir;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "usuario_id")
     private User user;
 
 }

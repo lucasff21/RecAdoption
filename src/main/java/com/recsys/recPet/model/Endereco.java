@@ -25,7 +25,7 @@ public class Endereco {
     private String uf;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "usuario_id")
     @JsonIgnore
     private User user;
 

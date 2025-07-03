@@ -69,12 +69,12 @@ public class AnimalController {
         if (animalDTO.getImagem() != null && !animalDTO.getImagem().isEmpty()) {
             logger.info("Uploading image...");
             Map<?, ?> image = this.imageService.uploadImage(animalDTO.getImagem(), "pets/adoption");
-            animal.setImagePath((String) image.get("secure_url"));
+            animal.setImagemPath((String) image.get("secure_url"));
         }
 
-        Animal savedAnimal = animalService.save(animal);
+        animalService.save(animal);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedAnimal);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value ="/{id}", consumes = "multipart/form-data")
