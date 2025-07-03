@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -21,18 +22,18 @@ public class UserResponseDTO {
     private LocalDate dataNascimento;
     private String cpf;
     private Endereco endereco;
-    private LocalDate criadoEm;
+    private LocalDateTime createdAt;
 
     public UserResponseDTO(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
-        this.tipoUsuario = user.getTipoUsuario();
+        this.tipoUsuario = user.getTipo();
         this.nome = user.getNome();
         this.telefone = user.getTelefone();
         this.genero = user.getGenero();
         this.dataNascimento = user.getDataNascimento();
         this.cpf = user.getCpf();
         this.endereco = user.getEndereco();
-        this.criadoEm = user.getCriadoEm();
+        this.createdAt = user.getCreatedAt();
     }
 }

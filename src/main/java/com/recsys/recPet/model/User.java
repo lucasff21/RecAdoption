@@ -6,12 +6,14 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import java.util.List;
@@ -30,13 +32,13 @@ public class User implements UserDetails {
     private Long id;
 
     @JsonIgnore
-    private String password;
+    private String senha;
 
     @Column(unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private TipoUsuario tipoUsuario;
+    private TipoUsuario tipo;
 
     private String nome;
     private String telefone;
@@ -56,13 +58,21 @@ public class User implements UserDetails {
     @JsonIgnore
     private Questionario questionario;
 
-    @CreatedDate
-    private LocalDate criadoEm;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String authority = tipoUsuario.name();
+        String authority = tipo.name();
         return List.of(new SimpleGrantedAuthority(authority));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senha;
     }
 
     @Override

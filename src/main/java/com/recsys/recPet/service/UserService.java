@@ -55,8 +55,8 @@ public class UserService {
     public void createUser(CreateAdoptiveUserDTO createUserDto) {
         User newUser = new User();
         newUser.setEmail(createUserDto.getEmail());
-        newUser.setPassword(passwordEncoder.encode(createUserDto.getSenha()));
-        newUser.setTipoUsuario(TipoUsuario.ADOTANTE);
+        newUser.setSenha(passwordEncoder.encode(createUserDto.getSenha()));
+        newUser.setTipo(TipoUsuario.ADOTANTE);
         newUser.setNome(createUserDto.getNome());
         newUser.setCpf(createUserDto.getCpf());
         newUser.setTelefone(createUserDto.getTelefone());
@@ -93,12 +93,12 @@ public class UserService {
         if (query != null && !query.isEmpty()) {
             users = userRepository.findByNomeContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query, pageable);
         } else if (tipoUsuario != null) {
-            users = userRepository.findByTipoUsuario(tipoUsuario, pageable);
+            users = userRepository.findByTipo(tipoUsuario, pageable);
         } else {
             users = userRepository.findAll(pageable);
         }
 
-        return users.map(user -> new UserResponseDTO(user));
+        return users.map(UserResponseDTO::new);
     }
 
     public User findById(Long id){

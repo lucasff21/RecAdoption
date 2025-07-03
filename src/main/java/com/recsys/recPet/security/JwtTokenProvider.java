@@ -32,7 +32,7 @@ public class JwtTokenProvider {
                     .withIssuedAt(creationDate())
                     .withExpiresAt(expirationDate())
                     .withSubject(user.getUsername())
-                    .withClaim("ROLE", user.getTipoUsuario().name())
+                    .withClaim("ROLE", user.getTipo().name())
                     .sign(algorithm);
         } catch (JWTCreationException exception){
             throw new JWTCreationException("Erro ao gerar token.", exception);

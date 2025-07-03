@@ -63,7 +63,7 @@ class UserControllerTest {
 
         Optional<User> user = userRepository.findByEmail("maria@gmail.com");
         assertTrue(user.isPresent());
-        assertEquals(TipoUsuario.ADOTANTE, user.get().getTipoUsuario());
+        assertEquals(TipoUsuario.ADOTANTE, user.get().getTipo());
     }
 
     @Test

@@ -24,8 +24,8 @@ public class AuthUtils {
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setEmail("admin@test.com");
-                    newUser.setPassword(passwordEncoder.encode("123"));
-                    newUser.setTipoUsuario(TipoUsuario.ADMIN);
+                    newUser.setSenha(passwordEncoder.encode("123"));
+                    newUser.setTipo(TipoUsuario.ADMIN);
                     return userRepository.save(newUser);
                 });
 
@@ -35,7 +35,7 @@ public class AuthUtils {
     public String generateUserToken() {
         User regularUser = new User();
         regularUser.setEmail("user@test.com");
-        regularUser.setTipoUsuario(TipoUsuario.ADOTANTE);
+        regularUser.setTipo(TipoUsuario.ADOTANTE);
 
         return tokenProvider.generateToken(regularUser);
     }
