@@ -1,5 +1,6 @@
 package com.recsys.recPet.controller;
 
+import com.recsys.recPet.dto.AdocaoUpdateDTO;
 import com.recsys.recPet.dto.UserResponseDTO;
 import com.recsys.recPet.dto.admin.AdminAdocaoDTO;
 import com.recsys.recPet.dto.admin.CreateUserDTO;
@@ -18,6 +19,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/admin")
@@ -55,7 +58,7 @@ public class AdminController {
     public Page<UserResponseDTO> findAll(
             @RequestParam(value = "query", required = false) String query,
             @RequestParam(value = "role", required = false) TipoUsuario role,
-            @PageableDefault(sort = "criadoEm", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
         return userService.findAll(query, role, pageable);
     }
@@ -73,10 +76,20 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(adminAdocaoPage);
     }
 
-    @PatchMapping("/adocoes/{id}/status")
-    public ResponseEntity<Adocao> updateStatus(@PathVariable Long id, @RequestParam AdocaoStatus status) {
+    @PatchMapping("/adocoes/{id}")
+    public ResponseEntity<Adocao> updateStatus(@PathVariable Long id, @RequestBody AdocaoUpdateDTO solicitacaoUpdateDTO) {
         Adocao adocao = adocaoService.findById(id);
-        adocao.setStatus(status);
+        adocao.setStatus(solicitacaoUpdateDTO.getStatus());
+
+        if (solicitacaoUpdateDTO.getStatus() == AdocaoStatus.FINALIZADO) {
+            adocao.setConcluidoEm(LocalDateTime.now());
+        } else {
+            adocao.setConcluidoEm(null);
+        }
+
+        if (solicitacaoUpdateDTO.getObservacoes() != null) {
+            adocao.setObservacoes(solicitacaoUpdateDTO.getObservacoes());
+        }
         Adocao updatedAdocao = adocaoService.update(adocao);
         return ResponseEntity.status(HttpStatus.OK).body(updatedAdocao);
     }
