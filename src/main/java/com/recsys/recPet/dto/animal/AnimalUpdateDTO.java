@@ -1,8 +1,8 @@
 package com.recsys.recPet.dto.animal;
 
-import com.recsys.recPet.enums.pet.Pelagem;
-import com.recsys.recPet.enums.pet.Porte;
-import com.recsys.recPet.enums.pet.Sexo;
+import com.recsys.recPet.enums.animal.Pelagem;
+import com.recsys.recPet.enums.animal.Porte;
+import com.recsys.recPet.enums.animal.Sexo;
 import com.recsys.recPet.model.Animal;
 import lombok.AllArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,8 +36,8 @@ public class AnimalUpdateDTO {
     public void updateEntity(Animal animal) {
         Optional.ofNullable(this.nome).ifPresent(animal::setNome);
         Optional.ofNullable(this.dataNascimentoAproximada).ifPresent(animal::setDataNascimentoAproximada);
-        Optional.ofNullable(this.sexo).ifPresent(sexo -> animal.setSexo(sexo.name()));
-        Optional.ofNullable(this.porte).ifPresent(porte -> animal.setPorte(porte.name()));
-        Optional.ofNullable(this.pelagem).ifPresent(pelagem -> animal.setPelagem(pelagem.name()));
+        Optional.ofNullable(this.sexo).ifPresent(sexo -> animal.setSexo(getSexo()));
+        Optional.ofNullable(this.porte).ifPresent(porte -> animal.setPorte(getPorte()));
+        Optional.ofNullable(this.pelagem).ifPresent(pelagem -> animal.setPelagem(getPelagem()));
     }
 }

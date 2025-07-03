@@ -1,10 +1,11 @@
-package com.recsys.recPet.pet;
+package com.recsys.recPet.animal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.recsys.recPet.enums.pet.Porte;
-import com.recsys.recPet.enums.pet.Sexo;
-import com.recsys.recPet.model.Cachorro;
-import com.recsys.recPet.repository.CachorroRepository;
+import com.recsys.recPet.enums.animal.Pelagem;
+import com.recsys.recPet.enums.animal.Porte;
+import com.recsys.recPet.enums.animal.Sexo;
+import com.recsys.recPet.model.Animal;
+import com.recsys.recPet.repository.AnimalRepository;
 import com.recsys.recPet.service.ImageService;
 import com.recsys.recPet.utils.AuthUtils;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class CachorroControllerTest {
+public class AnimalControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -45,7 +46,7 @@ public class CachorroControllerTest {
     private ImageService imageService;
 
     @Autowired
-    private CachorroRepository cachorroRepository;
+    private AnimalRepository animalRepository;
 
     @Test
     void criarCachorro_DeveManterEnumsCorretos() throws Exception {
@@ -65,27 +66,20 @@ public class CachorroControllerTest {
                         .param("sexo", "MACHO")
                         .param("porte", "MEDIO")
                         .param("pelagem", "CURTA")
-                        .param("idealCasa", "true")
-                        .param("gostaCrianca", "true")
-                        .param("caoGuarda", "false")
-                        .param("brincalhao", "true")
-                        .param("necessidadeCorrer", "true")
-                        .param("quedaPelo", "false")
-                        .param("tendeLatir", "true")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         String responseJson = result.getResponse().getContentAsString();
-        Cachorro responseCachorro = new ObjectMapper().readValue(responseJson, Cachorro.class);
+        Animal responseCachorro = new ObjectMapper().readValue(responseJson, Animal.class);
 
         assertNotNull(responseCachorro.getId());
         assertEquals("Rex", responseCachorro.getNome());
         assertEquals("2023-01-02", responseCachorro.getDataNascimentoAproximada().toString());
-        assertEquals(Sexo.MACHO.toString(), responseCachorro.getSexo());
-        assertEquals(Porte.MEDIO.toString(), responseCachorro.getPorte());
-        assertEquals("http://test-image.com", responseCachorro.getImagePath());
+        assertEquals(Sexo.MACHO, responseCachorro.getSexo());
+        assertEquals(Porte.MEDIO, responseCachorro.getPorte());
+        assertEquals("http://test-image.com", responseCachorro.getImagemPath());
     }
 
     @Test
@@ -100,22 +94,15 @@ public class CachorroControllerTest {
 
         doNothing().when(imageService).delete(anyString());
 
-        Cachorro cachorroTeste = new Cachorro();
+        Animal cachorroTeste = new Animal();
         cachorroTeste.setNome("Luna");
         cachorroTeste.setDataNascimentoAproximada(LocalDate.of(2023, Calendar.FEBRUARY, 2));
-        cachorroTeste.setSexo(Sexo.FEMEA.name());
-        cachorroTeste.setPorte(Porte.PEQUENO.name());
-        cachorroTeste.setPelagem("LONGA");
-        cachorroTeste.setIdealCasa(true);
-        cachorroTeste.setGostaCrianca(true);
-        cachorroTeste.setCaoGuarda(false);
-        cachorroTeste.setBrincalhao(true);
-        cachorroTeste.setNecessidadeCorrer(true);
-        cachorroTeste.setQuedaPelo(false);
-        cachorroTeste.setTendeLatir(true);
-        cachorroTeste.setImagePath("https://exemplo.com/luna.jpg");
+        cachorroTeste.setSexo(Sexo.FEMEA);
+        cachorroTeste.setPorte(Porte.PEQUENO);
+        cachorroTeste.setPelagem(Pelagem.LONGA);
+        cachorroTeste.setImagemPath("https://exemplo.com/luna.jpg");
 
-        Cachorro cachorro = cachorroRepository.save(cachorroTeste);
+        Animal cachorro = animalRepository.save(cachorroTeste);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
                         .multipart(HttpMethod.PUT, "/api/cachorro/" + cachorro.getId())
@@ -124,26 +111,19 @@ public class CachorroControllerTest {
                         .param("sexo", "FEMEA")
                         .param("porte", "GRANDE")
                         .param("pelagem", "CURTA")
-                        .param("idealCasa", "true")
-                        .param("gostaCrianca", "true")
-                        .param("caoGuarda", "false")
-                        .param("brincalhao", "true")
-                        .param("necessidadeCorrer", "true")
-                        .param("quedaPelo", "false")
-                        .param("tendeLatir", "true")
                         .header("Authorization", "Bearer " + adminToken)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Cachorro responseCachorro = new ObjectMapper().readValue(
+        Animal responseCachorro = new ObjectMapper().readValue(
                 result.getResponse().getContentAsString(),
-                Cachorro.class
+                Animal.class
         );
 
         assertEquals("Nora", responseCachorro.getNome());
-        assertEquals(Sexo.FEMEA.toString(), responseCachorro.getSexo());
-        assertEquals(Porte.GRANDE.toString(), responseCachorro.getPorte());
-        assertEquals("http://test-image2.com", responseCachorro.getImagePath());
+        assertEquals(Sexo.FEMEA, responseCachorro.getSexo());
+        assertEquals(Porte.GRANDE, responseCachorro.getPorte());
+        assertEquals("http://test-image2.com", responseCachorro.getImagemPath());
     }
 }

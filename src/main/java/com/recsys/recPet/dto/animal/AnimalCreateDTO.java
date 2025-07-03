@@ -1,8 +1,9 @@
 package com.recsys.recPet.dto.animal;
 
-import com.recsys.recPet.enums.pet.Pelagem;
-import com.recsys.recPet.enums.pet.Porte;
-import com.recsys.recPet.enums.pet.Sexo;
+import com.recsys.recPet.enums.animal.Pelagem;
+import com.recsys.recPet.enums.animal.Porte;
+import com.recsys.recPet.enums.animal.Sexo;
+import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,9 @@ public class AnimalCreateDTO {
     @NotNull(message = "Data de nascimento aproximada é obrigatória")
     private LocalDate dataNascimentoAproximada;
 
+    @NotNull(message = "Tipo é obrigatório")
+    private Tipo tipo;
+
     @NotNull(message = "Sexo é obrigatório")
     private Sexo sexo;
 
@@ -40,10 +44,10 @@ public class AnimalCreateDTO {
         Animal animal = new Animal();
         animal.setNome(this.nome);
         animal.setDataNascimentoAproximada(this.dataNascimentoAproximada);
-        animal.setSexo(this.sexo.name());
-        animal.setPorte(this.porte.name());
-        animal.setPelagem(this.pelagem.name());
-
+        animal.setSexo(this.sexo);
+        animal.setPorte(this.porte);
+        animal.setPelagem(this.pelagem);
+        animal.setTipo(this.tipo);
         return animal;
     }
 }

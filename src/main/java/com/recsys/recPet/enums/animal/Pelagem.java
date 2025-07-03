@@ -1,4 +1,4 @@
-package com.recsys.recPet.enums.pet;
+package com.recsys.recPet.enums.animal;
 
 public enum Pelagem {
     CURTA("Curta"),
