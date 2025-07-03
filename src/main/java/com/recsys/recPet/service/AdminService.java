@@ -22,8 +22,8 @@ public class AdminService {
         User user = new User();
         user.setNome(createUserDto.getNome());
         user.setEmail(createUserDto.getEmail());
-        user.setPassword(passwordEncoder.encode(createUserDto.getSenha()));
-        user.setTipoUsuario(createUserDto.getTipo());
+        user.setSenha(passwordEncoder.encode(createUserDto.getSenha()));
+        user.setTipo(createUserDto.getTipo());
         userRepository.save(user);
     }
 
@@ -33,7 +33,7 @@ public class AdminService {
 
     public void updateUser(Long id, UpdateRoleDTO updateRoleDto) {
         User user = userRepository.findById(id).orElseThrow();
-        user.setTipoUsuario(updateRoleDto.getTipo());
+        user.setTipo(updateRoleDto.getTipo());
         userRepository.save(user);
     }
 }
