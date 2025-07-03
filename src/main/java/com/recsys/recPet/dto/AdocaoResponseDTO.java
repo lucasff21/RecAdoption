@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class AdocaoResponseDTO {
     private Long id;
-    private LocalDate dataAdocao;
+    private LocalDateTime concluidoEm;
     private AdocaoStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -24,7 +24,7 @@ public class AdocaoResponseDTO {
 
     public AdocaoResponseDTO(Adocao adocao) {
         this.id = adocao.getId();
-        this.dataAdocao = adocao.getDataAdocao();
+        this.concluidoEm = adocao.getConcluidoEm();
         this.status = adocao.getStatus();
         this.animal = adocao.getAnimal();
     }
