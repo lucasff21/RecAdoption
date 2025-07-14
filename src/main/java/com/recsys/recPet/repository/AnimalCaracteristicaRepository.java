@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AnimalCaracteristicaRepository extends JpaRepository<AnimalCaracteristica, Integer>
+public interface AnimalCaracteristicaRepository extends JpaRepository<AnimalCaracteristica, Long>
 {
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CaracteristicaRepository extends JpaRepository<Caracteristica, Integer> {
+public interface CaracteristicaRepository extends JpaRepository<Caracteristica, Long> {
     Optional<Caracteristica> findByNome(String nome);
     List<Caracteristica> findByNomeIn(List<String> nomes);
 }
