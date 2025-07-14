@@ -1,6 +1,9 @@
 package com.recsys.recPet.service;
 
 import com.recsys.recPet.dto.*;
+import com.recsys.recPet.dto.usuario.UserResponseDTO;
+import com.recsys.recPet.dto.usuario.UsuarioAdotanteCreateDTO;
+import com.recsys.recPet.dto.usuario.UsuarioLoginDTO;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.model.Endereco;
 import com.recsys.recPet.model.User;
@@ -38,7 +41,7 @@ public class UserService {
     }
 
 
-    public RecoveryJwtTokenDto authenticateUser(LoginUserDto loginUserDto) {
+    public RecoveryJwtTokenDto authenticateUser(UsuarioLoginDTO loginUserDto) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword());
 
@@ -52,7 +55,7 @@ public class UserService {
     }
 
 
-    public void createUser(CreateAdoptiveUserDTO createUserDto) {
+    public void createUser(UsuarioAdotanteCreateDTO createUserDto) {
         User newUser = new User();
         newUser.setEmail(createUserDto.getEmail());
         newUser.setSenha(passwordEncoder.encode(createUserDto.getSenha()));
@@ -111,9 +114,8 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public UserResponseDTO findByEmail(String email){
-        User user = userRepository.findByEmail(email)
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
-        return new UserResponseDTO(user);
     }
 }

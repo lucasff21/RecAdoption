@@ -1,6 +1,10 @@
 package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.*;
+import com.recsys.recPet.dto.usuario.UserLoginResponseDTO;
+import com.recsys.recPet.dto.usuario.UserResponseDTO;
+import com.recsys.recPet.dto.usuario.UsuarioAdotanteCreateDTO;
+import com.recsys.recPet.dto.usuario.UsuarioLoginDTO;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
 import jakarta.validation.Valid;
@@ -21,22 +25,24 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponseDTO> authenticateUser(@RequestBody LoginUserDto loginUserDto) {
+    public ResponseEntity<UserLoginResponseDTO> authenticateUser(@RequestBody UsuarioLoginDTO loginUserDto) {
         RecoveryJwtTokenDto token = userService.authenticateUser(loginUserDto);
 
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        UserResponseDTO user = userService.findByEmail(loginUserDto.getEmail());
+        User user = userService.findByEmail(loginUserDto.getEmail());
 
-        UserLoginResponseDTO response = new UserLoginResponseDTO(user, token.token());
+        UserResponseDTO userDTO =  new UserResponseDTO(user);
+
+        UserLoginResponseDTO response = new UserLoginResponseDTO(userDTO, token.token());
         return ResponseEntity.ok(response);
     }
 
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createUser(@Valid @RequestBody CreateAdoptiveUserDTO createUserDto) {
+    public ResponseEntity<Void> createUser(@Valid @RequestBody UsuarioAdotanteCreateDTO createUserDto) {
         userService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -67,8 +73,10 @@ public class UserController {
     @GetMapping("/findbyemail/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email){
         try {
-            UserResponseDTO user = userService.findByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).body(user);
+            User user = userService.findByEmail(email);
+            return ResponseEntity.status(HttpStatus.OK).body(
+                   new UserResponseDTO(user)
+            );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
         }
