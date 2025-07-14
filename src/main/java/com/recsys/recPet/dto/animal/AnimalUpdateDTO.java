@@ -29,15 +29,18 @@ public class AnimalUpdateDTO {
 
     private Pelagem pelagem;
 
-    private List<String> caracteristicas;
+    private List<Long> caracteristicasIds;
 
     private MultipartFile novaImagem;
+
+    private String descricao;
 
     public void updateEntity(Animal animal) {
         Optional.ofNullable(this.nome).ifPresent(animal::setNome);
         Optional.ofNullable(this.dataNascimentoAproximada).ifPresent(animal::setDataNascimentoAproximada);
-        Optional.ofNullable(this.sexo).ifPresent(sexo -> animal.setSexo(getSexo()));
-        Optional.ofNullable(this.porte).ifPresent(porte -> animal.setPorte(getPorte()));
-        Optional.ofNullable(this.pelagem).ifPresent(pelagem -> animal.setPelagem(getPelagem()));
+        Optional.ofNullable(this.sexo).ifPresent(animal::setSexo);
+        Optional.ofNullable(this.porte).ifPresent(animal::setPorte);
+        Optional.ofNullable(this.pelagem).ifPresent(animal::setPelagem);
+        Optional.ofNullable(this.descricao).ifPresent(animal::setDescricao);
     }
 }
