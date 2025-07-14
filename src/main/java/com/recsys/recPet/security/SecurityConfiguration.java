@@ -45,6 +45,7 @@ public class SecurityConfiguration {
             "/api/cachorro/{id}",
             "/users/create",
             "/users/login",
+            "/email/send-email"
     };
 
     public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
