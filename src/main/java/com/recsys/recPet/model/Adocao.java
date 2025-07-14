@@ -1,5 +1,6 @@
 package com.recsys.recPet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,11 +38,13 @@ public class Adocao {
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private AdocaoStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonIgnore
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "animal_id", nullable = false)
+    @JsonIgnore
     private Animal animal;
 }
