@@ -1,8 +1,8 @@
 package com.recsys.recPet.controller;
 
-import com.recsys.recPet.dto.AdocaoUpdateDTO;
-import com.recsys.recPet.dto.UserResponseDTO;
-import com.recsys.recPet.dto.admin.AdminAdocaoDTO;
+import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
+import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
+import com.recsys.recPet.dto.usuario.UserResponseDTO;
 import com.recsys.recPet.dto.admin.CreateUserDTO;
 import com.recsys.recPet.dto.admin.UpdateRoleDTO;
 import com.recsys.recPet.enums.TipoUsuario;
@@ -64,16 +64,15 @@ public class AdminController {
     }
 
     @GetMapping("/adocoes")
-    public ResponseEntity<Page<AdminAdocaoDTO>> getAllAdocoes(
+    public ResponseEntity<Page<AdocaoResponseDTO>> getAllAdocoes(
             Pageable pageable
     ) {
 
-        Page<?> resultPage = (Page<?>) adocaoService.findAllAdocoesWithQuestionario(pageable);
+        Page<Adocao> adocoesPage = adocaoService.findAllAdocoesWithQuestionario(pageable);
 
-        @SuppressWarnings("unchecked")
-        Page<AdminAdocaoDTO> adminAdocaoPage = (Page<AdminAdocaoDTO>) resultPage;
+        Page<AdocaoResponseDTO> adocaoDtoPage = adocoesPage.map(AdocaoResponseDTO::fromEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(adminAdocaoPage);
+        return ResponseEntity.ok(adocaoDtoPage);
     }
 
     @PatchMapping("/adocoes/{id}")
