@@ -3,7 +3,6 @@ package com.recsys.recPet.service;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.model.Adocao;
 import com.recsys.recPet.repository.AdocaoRepository;
-import com.recsys.recPet.repository.QuestionarioRepository;
 import com.recsys.recPet.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -19,7 +18,7 @@ public class AdocaoService {
     private final AdocaoRepository adocaoRepository;
     private final UserRepository userRepository;
 
-    public AdocaoService(AdocaoRepository adocaoRepository, QuestionarioRepository questionarioRepository ,
+    public AdocaoService(AdocaoRepository adocaoRepository,
                          UserRepository userRepository) {
         this.adocaoRepository = adocaoRepository;
         this.userRepository = userRepository;

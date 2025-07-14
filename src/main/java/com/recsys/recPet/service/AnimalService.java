@@ -127,11 +127,6 @@ public class AnimalService {
     }
 
     @Transactional
-    public Animal save(Animal animal) {
-        return animalRepository.save(animal);
-    }
-
-    @Transactional
     public Animal atualizarAnimal(Long idAnimal, AnimalUpdateDTO animalDTO) throws IOException {
         Animal animalExistente = animalRepository.findById(idAnimal)
                 .orElseThrow(() -> new RuntimeException("Animal não encontrado com o ID: " + idAnimal));
