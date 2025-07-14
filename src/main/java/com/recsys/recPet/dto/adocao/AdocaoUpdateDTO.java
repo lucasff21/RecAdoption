@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.adocao;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

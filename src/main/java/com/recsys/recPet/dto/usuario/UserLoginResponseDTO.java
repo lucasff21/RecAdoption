@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.usuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
