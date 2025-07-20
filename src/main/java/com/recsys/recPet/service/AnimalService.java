@@ -11,9 +11,8 @@ import com.recsys.recPet.model.AnimalCaracteristica;
 import com.recsys.recPet.repository.AnimalRepository;
 import com.recsys.recPet.repository.CaracteristicaRepository;
 import com.recsys.recPet.repository.AnimalCaracteristicaRepository;
+import com.recsys.recPet.repository.specification.AnimalSpecification;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,65 +51,12 @@ public class AnimalService {
             String faixaEtaria,
             Pageable pageable
     ) {
-        Specification<Animal> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (nome != null && !nome.isEmpty()) {
-                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("nome")), "%" + nome.toLowerCase() + "%"));
-            }
-
-            if (sexo != null && !sexo.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("sexo"), sexo));
-            }
-            if (porte != null && !porte.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(root.get("porte"), porte));
-            }
-
-            if (faixaEtaria != null && !faixaEtaria.isEmpty()) {
-                LocalDate today = LocalDate.now();
-                LocalDate minDate = null;
-                LocalDate maxDate = null;
-
-                switch (faixaEtaria.toLowerCase()) {
-                    case "filhote":
-                        maxDate = today;
-                        minDate = today.minusYears(1);
-                        break;
-                    case "adolescente":
-                        maxDate = today.minusYears(1).minusDays(1);
-                        minDate = today.minusYears(3);
-                        break;
-                    case "adulto":
-                        maxDate = today.minusYears(3).minusDays(1);
-                        minDate = today.minusYears(8);
-                        break;
-                    case "idoso":
-                        maxDate = today.minusYears(8).minusDays(1);
-                        break;
-                    default:
-                        break;
-                }
-
-                if (minDate != null) {
-                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("dataNascimentoAproximada"), minDate));
-                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dataNascimentoAproximada"), maxDate));
-                }
-
-
-                if (faixaEtaria.equalsIgnoreCase("idoso")) {
-                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("dataNascimentoAproximada"), maxDate));
-                }
-            }
-
-            if (caracteristicaIds != null && !caracteristicaIds.isEmpty()) {
-                Join<Animal, AnimalCaracteristica> animalCaracteristicasJoin = root.join("animalCaracteristicas");
-                Join<AnimalCaracteristica, Caracteristica> caracteristicaJoin = animalCaracteristicasJoin.join("caracteristica");
-
-                predicates.add(caracteristicaJoin.get("id").in(caracteristicaIds));
-            }
-
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+        Specification<Animal> spec = Specification
+                .where(AnimalSpecification.comNome(nome))
+                .and(AnimalSpecification.comSexo(sexo))
+                .and(AnimalSpecification.comPorte(porte))
+                .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
+                .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
 
