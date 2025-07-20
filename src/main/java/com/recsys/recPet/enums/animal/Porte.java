@@ -1,5 +1,8 @@
 package com.recsys.recPet.enums.animal;
 
+import lombok.Getter;
+
+@Getter
 public enum Porte {
     PEQUENO("Pequeno"),
     MEDIO("Médio"),
@@ -12,7 +15,15 @@ public enum Porte {
         this.nomeExibicao = nomeExibicao;
     }
 
-    public String getValorAcentuado() {
-        return this.nomeExibicao;
+    public static Porte fromString(String texto) {
+        if (texto == null) {
+            return null;
+        }
+        for (Porte p : Porte.values()) {
+            if (p.name().equalsIgnoreCase(texto)) {
+                return p;
+            }
+        }
+        return null;
     }
 }
