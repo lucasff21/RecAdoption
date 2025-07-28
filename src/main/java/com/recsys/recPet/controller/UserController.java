@@ -1,16 +1,14 @@
 package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.*;
-import com.recsys.recPet.dto.usuario.UserLoginResponseDTO;
-import com.recsys.recPet.dto.usuario.UserResponseDTO;
-import com.recsys.recPet.dto.usuario.UsuarioAdotanteCreateDTO;
-import com.recsys.recPet.dto.usuario.UsuarioLoginDTO;
+import com.recsys.recPet.dto.usuario.*;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,23 +16,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserService userService;
+    private final UserService usuarioService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponseDTO> authenticateUser(@RequestBody UsuarioLoginDTO loginUserDto) {
-        RecoveryJwtTokenDto token = userService.authenticateUser(loginUserDto);
+        RecoveryJwtTokenDto token = usuarioService.authenticateUser(loginUserDto);
 
         if (token == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        User user = userService.findByEmail(loginUserDto.getEmail());
+        User user = usuarioService.findByEmail(loginUserDto.getEmail());
 
-        UserResponseDTO userDTO =  new UserResponseDTO(user);
+        UsuarioResponseDTO userDTO =  new UsuarioResponseDTO(user);
 
         UserLoginResponseDTO response = new UserLoginResponseDTO(userDTO, token.token());
         return ResponseEntity.ok(response);
@@ -43,7 +41,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<Void> createUser(@Valid @RequestBody UsuarioAdotanteCreateDTO createUserDto) {
-        userService.createUser(createUserDto);
+        usuarioService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -52,7 +50,7 @@ public class UserController {
         User user  = new User();
         BeanUtils.copyProperties(userDTO, user);
         user.setId(id);
-        User userUpdate = userService.update(user);
+        User userUpdate = usuarioService.update(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(userUpdate);
 
@@ -60,25 +58,42 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id){
-        User user = userService.findById(id);
+        User user = usuarioService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        userService.delete(id);
+        usuarioService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/findbyemail/{email}")
     public ResponseEntity<?> findByEmail(@PathVariable String email){
         try {
-            User user = userService.findByEmail(email);
+            User user = usuarioService.findByEmail(email);
             return ResponseEntity.status(HttpStatus.OK).body(
-                   new UserResponseDTO(user)
+                   new UsuarioResponseDTO(user)
             );
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
         }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioResponseDTO> buscarMeuPerfil(Authentication authentication) {
+        User usuarioAutenticado = (User) authentication.getPrincipal();
+        UsuarioResponseDTO perfil = usuarioService.buscarPerfilPorId(usuarioAutenticado.getId());
+        return ResponseEntity.ok(perfil);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UsuarioResponseDTO> atualizarMeuPerfil(
+            Authentication authentication,
+            @Valid @RequestBody UsuarioUpdateDTO usuarioAtualizacaoDTO
+    ) {
+        User usuarioAutenticado = (User) authentication.getPrincipal();
+        UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarPerfil(usuarioAutenticado.getId(), usuarioAtualizacaoDTO);
+        return ResponseEntity.ok(usuarioAtualizado);
     }
 }
