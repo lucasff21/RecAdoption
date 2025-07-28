@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserLoginResponseDTO {
-    private UserResponseDTO user;
+    private UsuarioResponseDTO user;
     private String token;
 }
