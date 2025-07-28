@@ -65,8 +65,7 @@ public class SecurityConfiguration {
                                 // Permitir acesso para ADOTANTE e ADMIN em rotas de questionário
                                 .requestMatchers(HttpMethod.GET, "/api/questionario/findall", "/api/questionario/{id}", "/users/findbyemail/{email}", "/users/{id}","/api/questionario/email/{email}", "/api/adocao", "/api/adocao/usuario/{usuarioId}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
                                 .requestMatchers(HttpMethod.POST,"/api/questionario", "/api/adocao/create" ).hasAnyAuthority("ADOTANTE", "ADMIN")
-                                .requestMatchers(HttpMethod.PUT,"/api/questionario/{id}" ).hasAnyAuthority("ADOTANTE", "ADMIN")
-
+                                .requestMatchers(HttpMethod.PUT,"/api/questionario/{id}", "api/users/me").hasAnyAuthority("ADOTANTE", "ADMIN")
 
                                 .requestMatchers(HttpMethod.GET, "/admin/users").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/cachorro/create", "/api/cachorro/uploade-image").hasAuthority("ADMIN")
