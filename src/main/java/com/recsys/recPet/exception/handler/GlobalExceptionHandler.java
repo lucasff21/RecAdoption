@@ -1,6 +1,7 @@
 package com.recsys.recPet.exception.handler;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,19 +12,17 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class ResourceNotFoundException extends RuntimeException {
-    public ResourceNotFoundException(String message) {
-        super(message);
-    }
-}
 
 record ErrorResponse(int status, String error, String message) {}
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @Value("${spring.profiles.active:default}")
-    private String activeProfile;
+    private final String activeProfile;
+
+    public GlobalExceptionHandler(@Value("${spring.profiles.active:default}") String activeProfile) {
+        this.activeProfile = activeProfile;
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -46,6 +45,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Not Found", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, WebRequest request) {
+        String errorMessage = "Erro na requisição";
+
+        if ("dev".equals(activeProfile) || "local".equals(activeProfile)) {
+            if (ex.getRootCause() != null) {
+                errorMessage = "Erro de integridade: " + ex.getRootCause().getMessage();
+            } else {
+                errorMessage = "Erro de integridade: " + ex.getMessage();
+            }
+        }
+
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                errorMessage
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
