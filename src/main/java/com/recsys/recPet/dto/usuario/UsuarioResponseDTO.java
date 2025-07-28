@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserResponseDTO {
+public class UsuarioResponseDTO {
     private Long id;
     private String email;
     private TipoUsuario tipoUsuario;
@@ -27,7 +27,7 @@ public class UserResponseDTO {
     private LocalDateTime createdAt;
     private List<AdocaoResponseDTO> solicitacoes;
 
-    public UserResponseDTO(User user) {
+    public UsuarioResponseDTO(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.tipoUsuario = user.getTipo();
