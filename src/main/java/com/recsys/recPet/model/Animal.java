@@ -1,14 +1,13 @@
 package com.recsys.recPet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.recsys.recPet.enums.animal.Pelagem;
 import com.recsys.recPet.enums.animal.Porte;
 import com.recsys.recPet.enums.animal.Sexo;
 import com.recsys.recPet.enums.animal.Tipo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
@@ -22,6 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "animais")
+@EqualsAndHashCode(of = "id")
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,28 +51,25 @@ public class Animal {
 
     private String imagemPath;
 
+    private Boolean disponivelParaAdocao;
+
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Adocao> adocoes;
 
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<AnimalCaracteristica> animalCaracteristicas;
+    @JsonManagedReference("animal-caracteristica-ref")
+    @ToString.Exclude
+    private Set<AnimalCaracteristica> animalCaracteristicas  = new HashSet<>();
 
-
-    public void addAnimalCaracteristica(AnimalCaracteristica ac) {
-        if (animalCaracteristicas == null) {
-            animalCaracteristicas = new HashSet<>();
-        }
-        animalCaracteristicas.add(ac);
-        ac.setAnimal(this);
-        ac.setId(new AnimalCaracteristicaId(this.id, ac.getCaracteristica().getId()));
+    public void addAnimalCaracteristica(AnimalCaracteristica associacao) {
+        this.animalCaracteristicas.add(associacao);
+        associacao.setAnimal(this);
     }
 
-    public void removeAnimalCaracteristica(AnimalCaracteristica ac) {
-        if (animalCaracteristicas != null) {
-            animalCaracteristicas.remove(ac);
-            ac.setAnimal(null);
-            ac.setId(null);
-        }
+    public void removeAnimalCaracteristica(AnimalCaracteristica associacao) {
+        this.animalCaracteristicas.remove(associacao);
+        associacao.setAnimal(null);
+        associacao.setId(null);
     }
 }

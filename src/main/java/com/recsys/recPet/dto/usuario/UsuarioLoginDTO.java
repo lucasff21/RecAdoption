@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.usuario;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LoginUserDto {
+public class UsuarioLoginDTO {
     @NotBlank(message = "Email é obrigatório")
     private String email;
 

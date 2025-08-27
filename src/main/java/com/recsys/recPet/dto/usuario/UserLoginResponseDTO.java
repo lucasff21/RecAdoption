@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.usuario;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class UserLoginResponseDTO {
-    private UserResponseDTO user;
+    private UsuarioResponseDTO user;
     private String token;
 }

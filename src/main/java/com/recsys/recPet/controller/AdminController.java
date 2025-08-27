@@ -1,12 +1,13 @@
 package com.recsys.recPet.controller;
 
-import com.recsys.recPet.dto.AdocaoUpdateDTO;
-import com.recsys.recPet.dto.UserResponseDTO;
-import com.recsys.recPet.dto.admin.AdminAdocaoDTO;
+import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
+import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
+import com.recsys.recPet.dto.usuario.UsuarioResponseDTO;
 import com.recsys.recPet.dto.admin.CreateUserDTO;
 import com.recsys.recPet.dto.admin.UpdateRoleDTO;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
+import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
 import com.recsys.recPet.service.AdminService;
 import com.recsys.recPet.service.AdocaoService;
@@ -55,25 +56,26 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public Page<UserResponseDTO> findAll(
-            @RequestParam(value = "query", required = false) String query,
+    public Page<UsuarioResponseDTO> findAll(
+            @RequestParam(value = "valor", required = false) String valor,
+            @RequestParam(value = "tipoBusca", required = false) TipoBusca tipoBusca,
+
             @RequestParam(value = "role", required = false) TipoUsuario role,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
-        return userService.findAll(query, role, pageable);
+        return userService.findAll(valor, tipoBusca, role, pageable);
     }
 
     @GetMapping("/adocoes")
-    public ResponseEntity<Page<AdminAdocaoDTO>> getAllAdocoes(
+    public ResponseEntity<Page<AdocaoResponseDTO>> getAllAdocoes(
             Pageable pageable
     ) {
 
-        Page<?> resultPage = (Page<?>) adocaoService.findAllAdocoesWithQuestionario(pageable);
+        Page<Adocao> adocoesPage = adocaoService.findAllAdocoesWithQuestionario(pageable);
 
-        @SuppressWarnings("unchecked")
-        Page<AdminAdocaoDTO> adminAdocaoPage = (Page<AdminAdocaoDTO>) resultPage;
+        Page<AdocaoResponseDTO> adocaoDtoPage = adocoesPage.map(AdocaoResponseDTO::fromEntity);
 
-        return ResponseEntity.status(HttpStatus.OK).body(adminAdocaoPage);
+        return ResponseEntity.ok(adocaoDtoPage);
     }
 
     @PatchMapping("/adocoes/{id}")

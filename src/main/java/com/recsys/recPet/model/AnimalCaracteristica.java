@@ -1,18 +1,20 @@
 package com.recsys.recPet.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "animais_caracteristicas")
+@EqualsAndHashCode(of = "id")
 public class AnimalCaracteristica {
 
     @EmbeddedId
@@ -21,6 +23,7 @@ public class AnimalCaracteristica {
     @ManyToOne
     @MapsId("animalId")
     @JoinColumn(name = "animal_id")
+    @JsonBackReference("animal-caracteristica-ref")
     private Animal animal;
 
     @ManyToOne
@@ -28,6 +31,6 @@ public class AnimalCaracteristica {
     @JoinColumn(name = "caracteristica_id")
     private Caracteristica caracteristica;
 
-    @CreatedDate
+    @CreationTimestamp
     private LocalDateTime createdAt;
 }

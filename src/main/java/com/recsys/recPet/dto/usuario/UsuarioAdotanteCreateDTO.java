@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.usuario;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +14,7 @@ import java.time.Period;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CreateAdoptiveUserDTO {
+public class UsuarioAdotanteCreateDTO {
     @NotBlank(message = "Nome é obrigatório")
     public String nome;
 

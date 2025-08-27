@@ -28,12 +28,4 @@ public class Endereco {
     @JoinColumn(name = "usuario_id")
     @JsonIgnore
     private User user;
-
-
-    @Override
-    public String toString() {
-        return "Endereco [cep=" + cep + ", logradouro=" + logradouro + ", complemento=" + complemento
-                + ", bairro=" + bairro + ", localidade=" + localidade + ", uf=" + uf + "]";
-    }
-
 }

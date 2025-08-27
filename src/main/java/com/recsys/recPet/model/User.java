@@ -3,9 +3,7 @@ package com.recsys.recPet.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.recsys.recPet.enums.TipoUsuario;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +23,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "usuarios")
+@EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
     @Id
@@ -52,10 +51,12 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
+    @ToString.Exclude
     private Set<Adocao> adocoes;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
+    @ToString.Exclude
     private Questionario questionario;
 
     @CreationTimestamp
@@ -99,11 +100,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", email=" + email + ", nome=" + nome + ", telefone=" + telefone
-                + ", endereco=" + (endereco != null ? endereco.getCep() : "sem endereço") + "]";
-    }
-
 }

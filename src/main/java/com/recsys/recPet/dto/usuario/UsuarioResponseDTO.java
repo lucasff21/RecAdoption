@@ -1,4 +1,5 @@
-package com.recsys.recPet.dto;
+package com.recsys.recPet.dto.usuario;
+import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.model.Endereco;
 import com.recsys.recPet.model.User;
@@ -8,11 +9,12 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserResponseDTO {
+public class UsuarioResponseDTO {
     private Long id;
     private String email;
     private TipoUsuario tipoUsuario;
@@ -23,8 +25,9 @@ public class UserResponseDTO {
     private String cpf;
     private Endereco endereco;
     private LocalDateTime createdAt;
+    private List<AdocaoResponseDTO> solicitacoes;
 
-    public UserResponseDTO(User user) {
+    public UsuarioResponseDTO(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.tipoUsuario = user.getTipo();
@@ -35,5 +38,6 @@ public class UserResponseDTO {
         this.cpf = user.getCpf();
         this.endereco = user.getEndereco();
         this.createdAt = user.getCreatedAt();
+        this.solicitacoes = user.getAdocoes().stream().map(AdocaoResponseDTO::fromEntity).toList();
     }
 }

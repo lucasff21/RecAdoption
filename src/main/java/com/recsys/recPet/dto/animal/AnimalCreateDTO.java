@@ -40,6 +40,10 @@ public class AnimalCreateDTO {
 
     private List<String> caracteristicas;
 
+    private String descricao;
+
+    private List<Long> caracteristicasIds;
+
     public Animal toEntity() {
         Animal animal = new Animal();
         animal.setNome(this.nome);
@@ -48,6 +52,7 @@ public class AnimalCreateDTO {
         animal.setPorte(this.porte);
         animal.setPelagem(this.pelagem);
         animal.setTipo(this.tipo);
+        animal.setDescricao(this.descricao);
         return animal;
     }
 }

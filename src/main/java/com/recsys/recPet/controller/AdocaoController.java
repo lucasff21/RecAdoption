@@ -1,7 +1,7 @@
 package com.recsys.recPet.controller;
 
-import com.recsys.recPet.dto.AdocaoDTO;
-import com.recsys.recPet.dto.AdocaoResponseDTO;
+import com.recsys.recPet.dto.adocao.AdocaoDTO;
+import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
 
@@ -16,25 +16,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/adocao")
 public class AdocaoController {
 
     private final AdocaoService adocaoService;
-    private final AnimalService cachorroService;
+    private final AnimalService animalService;
 
     public AdocaoController(AdocaoService adocaoService, AnimalService cachorroService) {
         this.adocaoService = adocaoService;
-        this.cachorroService = cachorroService;
+        this.animalService = cachorroService;
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) throws Exception {
         Adocao adocao = new Adocao();
         adocao.setUser(user);
         adocao.setStatus(AdocaoStatus.PENDENTE);
-        Animal animal = cachorroService.findById(adocaoDTO.animalId());
+        Animal animal = animalService.findById(adocaoDTO.animalId());
         if (animal == null) {
             throw new IllegalArgumentException("Animal não encontrado!");
         }
@@ -55,9 +56,15 @@ public class AdocaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Adocao>> adocaoList() {
+    public ResponseEntity<List<AdocaoResponseDTO>> adocaoList() {
         List<Adocao> adocaoList = adocaoService.findAall();
-        return ResponseEntity.status(HttpStatus.OK).body(adocaoList);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                adocaoList
+                        .stream()
+                        .map(AdocaoResponseDTO::fromEntity)
+                        .collect(Collectors.toList())
+
+        );
     }
 
     @GetMapping("/{id}")
