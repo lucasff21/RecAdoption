@@ -22,7 +22,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendSimpleEmail(String emailDestinatario, String nomeDestinatario)
+    public void sendSimpleEmail(String emailDestinatario, String nomeDestinatario, String token)
             throws MessagingException, UnsupportedEncodingException {
 
         String mailFrom = environment.getProperty("spring.mail.username");
@@ -35,15 +35,16 @@ public class EmailService {
         email.setSubject(MAIL_SUBJECT);
         email.setFrom(new InternetAddress(mailFrom, mailFromName));
 
+        String link = "http://localhost:3000/recuperar-senha?token=" + token;
+
         String corpo = String.format(
                 "Olá, %s!\n\nRecebemos seu pedido para recuperação de senha. " +
-                        "Clique no link abaixo para redefinir sua senha:\n\n%s\n\nEquipe RecPet",
+                        "Clique no link abaixo para redefinir sua senha:\n\n%s\n\nEquipe Veridt",
                 nomeDestinatario,
-                "https://sua-aplicacao.com/recuperar-senha" // Aqui você pode colocar um link real
+                link
         );
 
         email.setText(corpo, false);
-
         mailSender.send(mimeMessage);
     }
 }

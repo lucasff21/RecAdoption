@@ -4,6 +4,7 @@ import com.recsys.recPet.dto.*;
 import com.recsys.recPet.dto.usuario.*;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -95,5 +96,31 @@ public class UserController {
         User usuarioAutenticado = (User) authentication.getPrincipal();
         UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarPerfil(usuarioAutenticado.getId(), usuarioAtualizacaoDTO);
         return ResponseEntity.ok(usuarioAtualizado);
+    }
+
+    @PostMapping("/password-reset/request")
+    public ResponseEntity<?> requestPasswordReset(@RequestParam("email") String email) {
+        try {
+            User user = usuarioService.findByEmail(email);
+            usuarioService.setValuesResetPassword(user);
+            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link."); // evita exposição
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado");
+        }
+    }
+
+    @PutMapping("/new-password")
+    public ResponseEntity<?> resetPassword(@RequestParam("password") String password,
+                                           @RequestParam("tokenReset") String token) {
+        try {
+            usuarioService.resetNewPassword(password, token);
+            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link."); // evita exposição
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado");
+        }
     }
 }

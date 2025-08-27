@@ -45,7 +45,8 @@ public class SecurityConfiguration {
             "/api/cachorro/{id}",
             "/users/create",
             "/users/login",
-            "/email/send-email"
+            "/users/password-reset/request",
+            "/users/new-password"
     };
 
     public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
