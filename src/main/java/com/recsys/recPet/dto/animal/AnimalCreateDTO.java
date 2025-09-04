@@ -53,6 +53,7 @@ public class AnimalCreateDTO {
         animal.setPelagem(this.pelagem);
         animal.setTipo(this.tipo);
         animal.setDescricao(this.descricao);
+        animal.setDisponivelParaAdocao(true);
         return animal;
     }
 }
