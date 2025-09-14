@@ -7,6 +7,7 @@ import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class AnimalResponseDTO {
     private Long id;
     private String nome;
@@ -27,37 +29,31 @@ public class AnimalResponseDTO {
     private String descricao;
     private Boolean disponivelParaAdocao;
 
-    public AnimalResponseDTO() {
-        this.caracteristicas = List.of();
+    public AnimalResponseDTO(Animal animal) {
+        this.id = animal.getId();
+        this.nome = animal.getNome();
+        this.tipo = animal.getTipo();
+        this.sexo = animal.getSexo();
+        this.porte = animal.getPorte();
+        this.pelagem = animal.getPelagem();
+        this.dataNascimentoAproximada = animal.getDataNascimentoAproximada();
+        this.imagemPath = animal.getImagemPath();
+        this.descricao = animal.getDescricao();
+        this.disponivelParaAdocao = animal.getDisponivelParaAdocao();
+
+        if (animal.getAnimalCaracteristicas() != null) {
+            this.caracteristicas = animal.getAnimalCaracteristicas().stream()
+                    .map(ac -> CaracteristicaDTO.fromEntity(ac.getCaracteristica()))
+                    .collect(Collectors.toList());
+        } else {
+            this.caracteristicas = List.of();
+        }
     }
 
     public static AnimalResponseDTO fromEntity(Animal animal) {
         if (animal == null) {
             return null;
         }
-
-        AnimalResponseDTO dto = new AnimalResponseDTO();
-        dto.setId(animal.getId());
-        dto.setNome(animal.getNome());
-        dto.setTipo(animal.getTipo());
-        dto.setSexo(animal.getSexo());
-        dto.setPorte(animal.getPorte());
-        dto.setPelagem(animal.getPelagem());
-        dto.setDataNascimentoAproximada(animal.getDataNascimentoAproximada());
-        dto.setImagemPath(animal.getImagemPath());
-        dto.setDescricao(animal.getDescricao());
-        dto.setDisponivelParaAdocao(animal.getDisponivelParaAdocao());
-
-        if (animal.getAnimalCaracteristicas() != null) {
-            List<CaracteristicaDTO> caracteristicasDTO = animal.getAnimalCaracteristicas().stream()
-                    .map(ac -> CaracteristicaDTO.fromEntity(ac.getCaracteristica()))
-                    .collect(Collectors.toList());
-            dto.setCaracteristicas(caracteristicasDTO);
-        } else {
-            dto.setCaracteristicas(List.of());
-        }
-
-        return dto;
+        return new AnimalResponseDTO(animal);
     }
-
 }

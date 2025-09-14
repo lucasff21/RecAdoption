@@ -1,4 +1,4 @@
-package com.recsys.recPet.dto.animal;
+package com.recsys.recPet.dto.admin.animal;
 
 import com.recsys.recPet.enums.animal.Pelagem;
 import com.recsys.recPet.enums.animal.Porte;
