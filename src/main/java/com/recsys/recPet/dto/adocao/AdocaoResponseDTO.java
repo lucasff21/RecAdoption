@@ -19,6 +19,7 @@ public class AdocaoResponseDTO {
     private AdocaoStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String observacoes;
 
     private AnimalResponseDTO animal;
     private UsuarioLoginResponseDTO usuario;
@@ -37,6 +38,7 @@ public class AdocaoResponseDTO {
         adocaoResponseDTO.setCreatedAt(adocao.getCreatedAt());
         adocaoResponseDTO.setUpdatedAt(adocao.getUpdatedAt());
         adocaoResponseDTO.setUsuario(UsuarioLoginResponseDTO.fromEntity(adocao.getUser()));
+        adocaoResponseDTO.setObservacoes(adocao.getObservacoes());
 
         return adocaoResponseDTO;
     }
