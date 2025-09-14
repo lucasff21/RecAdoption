@@ -65,6 +65,10 @@ public class User implements UserDetails {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private String resetPasswordToken;
+
+    private LocalDateTime tokenExpiration;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String authority = tipo.name();

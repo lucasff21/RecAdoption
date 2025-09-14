@@ -13,8 +13,10 @@ import com.recsys.recPet.repository.EnderecoRepository;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.repository.specification.UserSpecification;
 import com.recsys.recPet.security.JwtTokenProvider;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,6 +25,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -36,6 +43,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     public UserService(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, PasswordEncoder passwordEncoder, EnderecoRepository enderecoRepository) {
         this.authenticationManager = authenticationManager;
@@ -151,5 +161,42 @@ public class UserService {
         User usuarioSalvo = userRepository.save(usuarioParaAtualizar);
 
         return new UsuarioResponseDTO(usuarioSalvo);
+    }
+
+    public boolean setValuesResetPassword(User user) throws MessagingException, UnsupportedEncodingException {
+
+        String tokenGenerated = UUID.randomUUID().toString();
+        user.setResetPasswordToken(tokenGenerated);
+        user.setTokenExpiration(LocalDateTime.now().plusHours(1));
+        userRepository.save(user);
+
+        emailService.sendSimpleEmail(user.getEmail(), user.getNome(), tokenGenerated);
+
+        return true;
+    }
+
+    public boolean resetNewPassword(String password, String token) {
+        Optional<User> userResponse = userRepository.findByResetPasswordToken(token);
+
+        if (userResponse.isEmpty()) {
+            throw new EntityNotFoundException("Token inválido.");
+        }
+
+        User user = userResponse.get();
+
+        if (!user.getResetPasswordToken().equals(token)) {
+            throw new IllegalStateException("Token inválido.");
+        }
+
+        if (user.getTokenExpiration().isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("Token expirado.");
+        }
+
+        user.setSenha(passwordEncoder.encode(password));
+        user.setResetPasswordToken(null);
+        user.setTokenExpiration(null);
+
+        userRepository.save(user);
+        return true;
     }
 }
