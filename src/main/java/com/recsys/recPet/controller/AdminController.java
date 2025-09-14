@@ -1,5 +1,6 @@
 package com.recsys.recPet.controller;
 
+import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
 import com.recsys.recPet.dto.usuario.UsuarioResponseDTO;
@@ -9,11 +10,10 @@ import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
-import com.recsys.recPet.service.AdminService;
-import com.recsys.recPet.service.AdocaoService;
-import com.recsys.recPet.service.UserService;
+import com.recsys.recPet.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
@@ -30,11 +31,15 @@ public class AdminController {
     private final AdminService adminService;
     private final UserService userService;
     private final AdocaoService adocaoService;
+    private final AnimalService animalService;
 
-    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService) {
+    private static final int DEFAULT_PAGE_SIZE = 20;
+
+    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService) {
         this.adminService = adminService;
         this.userService = userService;
         this.adocaoService = adocaoService;
+        this.animalService = animalService;
     }
 
     @PostMapping("/create")
@@ -56,7 +61,7 @@ public class AdminController {
     }
 
     @GetMapping("/users")
-    public Page<UsuarioResponseDTO> findAll(
+    public Page<UsuarioResponseDTO> findAllUsuarios(
             @RequestParam(value = "valor", required = false) String valor,
             @RequestParam(value = "tipoBusca", required = false) TipoBusca tipoBusca,
 
@@ -83,10 +88,11 @@ public class AdminController {
         Adocao adocao = adocaoService.findById(id);
         adocao.setStatus(solicitacaoUpdateDTO.getStatus());
 
-        if (solicitacaoUpdateDTO.getStatus() == AdocaoStatus.FINALIZADO) {
-            adocao.setConcluidoEm(LocalDateTime.now());
-        } else {
-            adocao.setConcluidoEm(null);
+        if (
+                !adocao.isConcluida() &&
+                (solicitacaoUpdateDTO.getStatus() == AdocaoStatus.FINALIZADO || solicitacaoUpdateDTO.getStatus() == AdocaoStatus.RECUSADO)
+        ) {
+            adocao.finalizar(solicitacaoUpdateDTO.getStatus());
         }
 
         if (solicitacaoUpdateDTO.getObservacoes() != null) {
@@ -94,5 +100,29 @@ public class AdminController {
         }
         Adocao updatedAdocao = adocaoService.update(adocao);
         return ResponseEntity.status(HttpStatus.OK).body(updatedAdocao);
+    }
+
+    @GetMapping("/animais")
+    public ResponseEntity<Page<AnimalAdminResponseDTO>> findAllAnimais(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) String sexo,
+            @RequestParam(required = false) String porte,
+            @RequestParam(required = false) List<Long> caracteristicas,
+            @RequestParam(required = false) String faixaEtaria,
+            @RequestParam(required = false) Boolean disponivelParaAdocao,
+            @RequestParam(defaultValue = "0") int page
+    ){
+        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
+
+        Page<AnimalAdminResponseDTO> animalPage = animalService.findAllForAdmin(
+                nome,
+                sexo,
+                porte,
+                caracteristicas,
+                faixaEtaria,
+                disponivelParaAdocao,
+                pageable
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(animalPage);
     }
 }

@@ -1,8 +1,9 @@
 package com.recsys.recPet.service;
 
-import com.recsys.recPet.dto.animal.AnimalCreateDTO;
+import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
+import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
-import com.recsys.recPet.dto.animal.AnimalUpdateDTO;
+import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
 import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.AnimalCaracteristicaId;
@@ -21,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.PageImpl;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,6 +53,7 @@ public class AnimalService {
     ) {
         Specification<Animal> spec = Specification
                 .where(AnimalSpecification.comNome(nome))
+                .and(AnimalSpecification.disponivelParaAdocao(true))
                 .and(AnimalSpecification.comSexo(sexo))
                 .and(AnimalSpecification.comPorte(porte))
                 .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
@@ -61,7 +62,7 @@ public class AnimalService {
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
 
         List<AnimalResponseDTO> dtoList = animalPage.getContent().stream()
-                .map(AnimalResponseDTO::fromEntity)
+                .map( AnimalResponseDTO::fromEntity)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtoList, pageable, animalPage.getTotalElements());
@@ -170,7 +171,6 @@ public class AnimalService {
         }
     }
 
-
     @Transactional
     public void delete(Long id) {
         Optional<Animal> animal =  animalRepository.findById(id);
@@ -182,5 +182,32 @@ public class AnimalService {
         return caracteristicas.stream()
                 .map(CaracteristicaDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public PageImpl<AnimalAdminResponseDTO> findAllForAdmin(
+            String nome,
+            String sexo,
+            String porte,
+            List<Long> caracteristicaIds,
+            String faixaEtaria,
+            Boolean disponivelParaAdocao,
+            Pageable pageable
+    ) {
+        Specification<Animal> spec = Specification
+                .where(AnimalSpecification.comNome(nome))
+                .and(AnimalSpecification.disponivelParaAdocao(disponivelParaAdocao))
+                .and(AnimalSpecification.comSexo(sexo))
+                .and(AnimalSpecification.comPorte(porte))
+                .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
+                .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds));
+
+        Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
+
+        List<AnimalAdminResponseDTO> dtoList = animalPage.getContent().stream()
+                .map(AnimalAdminResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, animalPage.getTotalElements());
     }
 }
