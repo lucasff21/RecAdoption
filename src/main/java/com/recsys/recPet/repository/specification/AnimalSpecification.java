@@ -100,4 +100,13 @@ public class AnimalSpecification {
             return caracteristicaJoin.get("id").in(caracteristicaIds);
         };
     }
+
+    public static Specification<Animal> disponivelParaAdocao(Boolean disponivel) {
+        return (root, query, criteriaBuilder) -> {
+            if (disponivel == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("disponivelParaAdocao"), disponivel);
+        };
+    }
 }
