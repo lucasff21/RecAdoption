@@ -1,8 +1,8 @@
 package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
-import com.recsys.recPet.dto.animal.AnimalUpdateDTO;
-import com.recsys.recPet.dto.animal.AnimalCreateDTO;
+import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
+import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.service.AnimalService;
