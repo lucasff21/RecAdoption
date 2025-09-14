@@ -47,4 +47,15 @@ public class Adocao {
     @JoinColumn(name = "animal_id", nullable = false)
     @JsonIgnore
     private Animal animal;
+
+    public void finalizar(AdocaoStatus status) {
+        if (status == AdocaoStatus.FINALIZADO) {
+            this.animal.setDisponivelParaAdocao(false);
+        }
+        this.setConcluidoEm(LocalDateTime.now());
+    }
+
+    public boolean isConcluida() {
+        return this.concluidoEm != null;
+    }
 }
