@@ -7,9 +7,9 @@ import com.recsys.recPet.dto.usuario.UsuarioResponseDTO;
 import com.recsys.recPet.dto.admin.CreateUserDTO;
 import com.recsys.recPet.dto.admin.UpdateRoleDTO;
 import com.recsys.recPet.enums.TipoUsuario;
-import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
+import com.recsys.recPet.repository.AnimalRepository;
 import com.recsys.recPet.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -34,12 +34,14 @@ public class AdminController {
     private final AnimalService animalService;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
+    private final AnimalRepository animalRepository;
 
-    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService) {
+    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, AnimalRepository animalRepository) {
         this.adminService = adminService;
         this.userService = userService;
         this.adocaoService = adocaoService;
         this.animalService = animalService;
+        this.animalRepository = animalRepository;
     }
 
     @PostMapping("/create")
@@ -85,21 +87,8 @@ public class AdminController {
 
     @PatchMapping("/adocoes/{id}")
     public ResponseEntity<Adocao> updateStatus(@PathVariable Long id, @RequestBody AdocaoUpdateDTO solicitacaoUpdateDTO) {
-        Adocao adocao = adocaoService.findById(id);
-        adocao.setStatus(solicitacaoUpdateDTO.getStatus());
-
-        if (
-                !adocao.isConcluida() &&
-                (solicitacaoUpdateDTO.getStatus() == AdocaoStatus.FINALIZADO || solicitacaoUpdateDTO.getStatus() == AdocaoStatus.RECUSADO)
-        ) {
-            adocao.finalizar(solicitacaoUpdateDTO.getStatus());
-        }
-
-        if (solicitacaoUpdateDTO.getObservacoes() != null) {
-            adocao.setObservacoes(solicitacaoUpdateDTO.getObservacoes());
-        }
-        Adocao updatedAdocao = adocaoService.update(adocao);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedAdocao);
+        Adocao adocaoAtualizada = adocaoService.atualizarStatus(id, solicitacaoUpdateDTO);
+        return ResponseEntity.ok(adocaoAtualizada);
     }
 
     @GetMapping("/animais")
@@ -124,5 +113,11 @@ public class AdminController {
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);
+    }
+
+    @PatchMapping("/animais/{id}")
+    public ResponseEntity<Void> alterarDisponibilidadeAnimal(@PathVariable Long id, @RequestParam Boolean disponivelParaAdocao) {
+        animalService.alterarDisponibilidade(id, disponivelParaAdocao);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

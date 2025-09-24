@@ -210,4 +210,10 @@ public class AnimalService {
 
         return new PageImpl<>(dtoList, pageable, animalPage.getTotalElements());
     }
+
+    public void alterarDisponibilidade(Long animalId, Boolean disponivel) {
+        Optional<Animal> animal = animalRepository.findById(animalId) ;
+
+        animal.ifPresent(value -> value.setDisponivelParaAdocao(disponivel));
+    }
 }
