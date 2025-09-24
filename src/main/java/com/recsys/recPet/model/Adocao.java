@@ -48,12 +48,17 @@ public class Adocao {
     @JsonIgnore
     private Animal animal;
 
-    public void finalizar(AdocaoStatus status) {
-        if (status == AdocaoStatus.FINALIZADO) {
-            this.animal.setDisponivelParaAdocao(false);
-        }
+    public void finalizar() {
+        this.setStatus(AdocaoStatus.FINALIZADO);
+        this.animal.setDisponivelParaAdocao(false);
         this.setConcluidoEm(LocalDateTime.now());
     }
+
+    public void cancelar() {
+        this.setStatus(AdocaoStatus.RECUSADO);
+        this.setConcluidoEm(LocalDateTime.now());
+    }
+
 
     public boolean isConcluida() {
         return this.concluidoEm != null;
