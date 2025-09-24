@@ -4,19 +4,18 @@ import com.recsys.recPet.dto.adocao.AdocaoDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.AdocaoService;
 import com.recsys.recPet.service.AnimalService;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/adocao")
@@ -57,14 +56,12 @@ public class AdocaoController {
 
     @GetMapping
     public ResponseEntity<List<AdocaoResponseDTO>> adocaoList() {
-        List<Adocao> adocaoList = adocaoService.findAall();
-        return ResponseEntity.status(HttpStatus.OK).body(
-                adocaoList
-                        .stream()
-                        .map(AdocaoResponseDTO::fromEntity)
-                        .collect(Collectors.toList())
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        );
+        User usuarioLogado = (User) authentication.getPrincipal();
+
+        List<AdocaoResponseDTO> adocaoList = adocaoService.getAdocoesByUserId(usuarioLogado.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(adocaoList);
     }
 
     @GetMapping("/{id}")
@@ -75,17 +72,9 @@ public class AdocaoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        adocaoService.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
-
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<AdocaoResponseDTO>> getAdocoesByUserId(@PathVariable Long usuarioId) {
-        try {
-            List<AdocaoResponseDTO> adocoes = adocaoService.getAdocoesByUserId(usuarioId);
-            return ResponseEntity.ok(adocoes);
-        } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User usuarioLogado = (User) authentication.getPrincipal();
+        adocaoService.deletarAdocaoUusuario(usuarioLogado.getId(), id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
