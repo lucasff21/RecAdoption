@@ -55,12 +55,8 @@ public class AdocaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AdocaoResponseDTO>> adocaoList() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        User usuarioLogado = (User) authentication.getPrincipal();
-
-        List<AdocaoResponseDTO> adocaoList = adocaoService.getAdocoesByUserId(usuarioLogado.getId());
+    public ResponseEntity<List<AdocaoResponseDTO>> adocaoList(@AuthenticationPrincipal User usuario) {
+        List<AdocaoResponseDTO> adocaoList = adocaoService.getAdocoesByUserId(usuario.getId());
         return ResponseEntity.status(HttpStatus.OK).body(adocaoList);
     }
 
@@ -71,10 +67,8 @@ public class AdocaoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User usuarioLogado = (User) authentication.getPrincipal();
-        adocaoService.deletarAdocaoUusuario(usuarioLogado.getId(), id);
+    public ResponseEntity<Void> delete(@PathVariable Long id, @AuthenticationPrincipal User usuario) {
+        adocaoService.deletarAdocaoUusuario(usuario.getId(), id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
