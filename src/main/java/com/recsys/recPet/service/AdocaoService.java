@@ -5,9 +5,12 @@ import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
 import com.recsys.recPet.repository.AdocaoRepository;
 import com.recsys.recPet.repository.UserRepository;
+import com.recsys.recPet.repository.specification.AdocaoSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -45,8 +48,18 @@ public class AdocaoService {
         }
     }
 
-    public Page<Adocao> findAllAdocoesWithQuestionario(Pageable pageable) {
-        return adocaoRepository.findAll(pageable);
+    public PageImpl<AdocaoResponseDTO> findAllAdocoes(AdocaoStatus status, String termo, Pageable pageable) {
+        Specification<Adocao> spec = Specification
+                .where(AdocaoSpecification.comStatus(status))
+                .and(AdocaoSpecification.comTermoDeBusca(termo));
+
+        Page<Adocao> adocaoPage = adocaoRepository.findAll(spec, pageable);
+
+        List<AdocaoResponseDTO> dtoList = adocaoPage.getContent().stream()
+                .map(AdocaoResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, adocaoPage.getTotalElements());
     }
 
     public List<AdocaoResponseDTO> getAdocoesByUserId(Long userId) {

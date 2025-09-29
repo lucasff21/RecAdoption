@@ -7,6 +7,7 @@ import com.recsys.recPet.dto.usuario.UsuarioResponseDTO;
 import com.recsys.recPet.dto.admin.CreateUserDTO;
 import com.recsys.recPet.dto.admin.UpdateRoleDTO;
 import com.recsys.recPet.enums.TipoUsuario;
+import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
 import com.recsys.recPet.repository.AnimalRepository;
@@ -75,13 +76,12 @@ public class AdminController {
 
     @GetMapping("/adocoes")
     public ResponseEntity<Page<AdocaoResponseDTO>> getAllAdocoes(
+            @RequestParam(required = false) AdocaoStatus status,
+            @RequestParam(required = false) String termo,
             Pageable pageable
     ) {
 
-        Page<Adocao> adocoesPage = adocaoService.findAllAdocoesWithQuestionario(pageable);
-
-        Page<AdocaoResponseDTO> adocaoDtoPage = adocoesPage.map(AdocaoResponseDTO::fromEntity);
-
+        Page<AdocaoResponseDTO> adocaoDtoPage = adocaoService.findAllAdocoes(status, termo, pageable);
         return ResponseEntity.ok(adocaoDtoPage);
     }
 
