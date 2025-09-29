@@ -86,16 +86,6 @@ public class AnimalController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        try {
-            imageService.delete(fileName);
-            return ResponseEntity.ok("File deleted successfully");
-        } catch (Exception e) {
-            logger.error("Error deleting file {}: {}", fileName, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete file: " + e.getMessage());
-        }
-    }
 
     @GetMapping("/caracteristicas")
     public ResponseEntity<List<CaracteristicaDTO>> getAllCaracteristicas() {

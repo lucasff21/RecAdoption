@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.GET, "/admin/users", "/admin/animais").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.POST, "/api/cachorro/create", "/api/cachorro/uploade-image").hasAuthority("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/cachorro/{id}", "/users/{id}").hasAuthority("ADMIN")
-                                .requestMatchers(HttpMethod.DELETE, "/api/cachorro", "/api/questionario/{id}", "/users/{id}", "/api/cachorro/delete/{fileName}").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/api/cachorro", "/api/questionario/{id}", "/users/{id}").hasAuthority("ADMIN")
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
 
                                 .anyRequest().denyAll()
