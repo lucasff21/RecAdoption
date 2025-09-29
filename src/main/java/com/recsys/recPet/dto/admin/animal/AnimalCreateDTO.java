@@ -44,6 +44,8 @@ public class AnimalCreateDTO {
 
     private List<Long> caracteristicasIds;
 
+    private boolean disponivelParaAdocao;
+
     public Animal toEntity() {
         Animal animal = new Animal();
         animal.setNome(this.nome);
@@ -53,7 +55,7 @@ public class AnimalCreateDTO {
         animal.setPelagem(this.pelagem);
         animal.setTipo(this.tipo);
         animal.setDescricao(this.descricao);
-        animal.setDisponivelParaAdocao(true);
+        animal.setDisponivelParaAdocao(this.disponivelParaAdocao);
         return animal;
     }
 }
