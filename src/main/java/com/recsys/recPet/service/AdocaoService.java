@@ -123,4 +123,9 @@ public class AdocaoService {
 
         adocaoOptional.ifPresent(adocaoRepository::delete);
     }
+
+    public Page<AdocaoResponseDTO> findAdocoesByAnimalId(Long animalId, Pageable pageable) {
+        return adocaoRepository.findByAnimalId(animalId, pageable)
+                .map(AdocaoResponseDTO::fromEntity);
+    }
 }
