@@ -24,15 +24,11 @@ import java.util.List;
 public class AnimalController {
 
     private final AnimalService animalService;
-    private final ImageService imageService;
-
-    Logger logger = org.slf4j.LoggerFactory.getLogger(AnimalController.class);
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    public AnimalController(AnimalService animalService, ImageService imageService) {
+    public AnimalController(AnimalService animalService) {
         this.animalService = animalService;
-        this.imageService = imageService;
     }
 
     @GetMapping("/findall")
