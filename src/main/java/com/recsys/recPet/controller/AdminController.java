@@ -10,7 +10,6 @@ import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
-import com.recsys.recPet.repository.AnimalRepository;
 import com.recsys.recPet.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -22,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,14 +33,12 @@ public class AdminController {
     private final AnimalService animalService;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
-    private final AnimalRepository animalRepository;
 
-    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, AnimalRepository animalRepository) {
+    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService) {
         this.adminService = adminService;
         this.userService = userService;
         this.adocaoService = adocaoService;
         this.animalService = animalService;
-        this.animalRepository = animalRepository;
     }
 
     @PostMapping("/create")
@@ -119,5 +115,11 @@ public class AdminController {
     public ResponseEntity<Void> alterarDisponibilidadeAnimal(@PathVariable Long id, @RequestParam Boolean disponivelParaAdocao) {
         animalService.alterarDisponibilidade(id, disponivelParaAdocao);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/animais/{id}/adocoes")
+    public ResponseEntity<Page<AdocaoResponseDTO>> getAdocoesByAnimalId(@PathVariable Long id,  Pageable pageable) {
+        Page<AdocaoResponseDTO> adocoes = adocaoService.findAdocoesByAnimalId(id, pageable);
+        return ResponseEntity.ok(adocoes);
     }
 }
