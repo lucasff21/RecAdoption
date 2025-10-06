@@ -118,7 +118,8 @@ public class AdminController {
     }
 
     @GetMapping("/animais/{id}/adocoes")
-    public ResponseEntity<Page<AdocaoResponseDTO>> getAdocoesByAnimalId(@PathVariable Long id,  Pageable pageable) {
+    public ResponseEntity<Page<AdocaoResponseDTO>> getAdocoesByAnimalId(@PathVariable Long id,  @RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
         Page<AdocaoResponseDTO> adocoes = adocaoService.findAdocoesByAnimalId(id, pageable);
         return ResponseEntity.ok(adocoes);
     }
