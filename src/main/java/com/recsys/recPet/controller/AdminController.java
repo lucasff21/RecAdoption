@@ -63,8 +63,7 @@ public class AdminController {
     public Page<UsuarioResponseDTO> findAllUsuarios(
             @RequestParam(value = "valor", required = false) String valor,
             @RequestParam(value = "tipoBusca", required = false) TipoBusca tipoBusca,
-
-            @RequestParam(value = "role", required = false) TipoUsuario role,
+            @RequestParam(value = "tipo", required = false) TipoUsuario role,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ){
         return userService.findAll(valor, tipoBusca, role, pageable);
