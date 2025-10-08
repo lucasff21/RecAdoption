@@ -3,6 +3,8 @@ package com.recsys.recPet.controller;
 import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
+import com.recsys.recPet.dto.pagina.PaginaRequestDTO;
+import com.recsys.recPet.dto.pagina.PaginaResponseDTO;
 import com.recsys.recPet.dto.usuario.UsuarioResponseDTO;
 import com.recsys.recPet.dto.admin.CreateUserDTO;
 import com.recsys.recPet.dto.admin.UpdateRoleDTO;
@@ -20,7 +22,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -31,14 +35,16 @@ public class AdminController {
     private final UserService userService;
     private final AdocaoService adocaoService;
     private final AnimalService animalService;
+    private final PaginaService paginaService;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService) {
+    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, PaginaService paginaService) {
         this.adminService = adminService;
         this.userService = userService;
         this.adocaoService = adocaoService;
         this.animalService = animalService;
+        this.paginaService = paginaService;
     }
 
     @PostMapping("/create")
@@ -121,5 +127,42 @@ public class AdminController {
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
         Page<AdocaoResponseDTO> adocoes = adocaoService.findAdocoesByAnimalId(id, pageable);
         return ResponseEntity.ok(adocoes);
+    }
+
+
+    @GetMapping("/paginas")
+    public ResponseEntity<Page<PaginaResponseDTO>> listarPaginas(
+            @PageableDefault(
+                    size = 10,
+                    sort = "updatedAt",
+                    direction = Sort.Direction.DESC)
+            Pageable pageable) {
+
+        Page<PaginaResponseDTO> paginas = paginaService.listarTodas(pageable);
+        return ResponseEntity.ok(paginas);
+    }
+
+    @GetMapping("/paginas/{id}")
+    public ResponseEntity<PaginaResponseDTO> getPaginaPorId(@PathVariable Long id) {
+        PaginaResponseDTO pagina = paginaService.buscarPorId(id);
+        return ResponseEntity.ok(pagina);
+    }
+
+    @PostMapping("/paginas")
+    public ResponseEntity<PaginaResponseDTO> criarPagina(@Valid @RequestBody PaginaRequestDTO paginaDTO) {
+        PaginaResponseDTO novaPagina = paginaService.criarPagina(paginaDTO);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(novaPagina.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(novaPagina);
+    }
+
+    @PutMapping("/paginas/{id}")
+    public ResponseEntity<PaginaResponseDTO> atualizarPagina(@PathVariable Long id, @Valid @RequestBody PaginaRequestDTO paginaDTO) {
+        PaginaResponseDTO paginaAtualizada = paginaService.atualizarPagina(id, paginaDTO);
+        return ResponseEntity.ok(paginaAtualizada);
     }
 }
