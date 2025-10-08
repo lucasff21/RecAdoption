@@ -46,7 +46,8 @@ public class SecurityConfiguration {
             "/users/create",
             "/users/login",
             "/users/password-reset/request",
-            "/users/new-password"
+            "/users/new-password",
+            "/paginas/{nome}"
     };
 
     public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
