@@ -132,11 +132,7 @@ public class AdminController {
 
     @GetMapping("/paginas")
     public ResponseEntity<Page<PaginaResponseDTO>> listarPaginas(
-            @PageableDefault(
-                    size = 10,
-                    sort = "updatedAt",
-                    direction = Sort.Direction.DESC)
-            Pageable pageable) {
+            @PageableDefault(sort = "updatedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<PaginaResponseDTO> paginas = paginaService.listarTodas(pageable);
         return ResponseEntity.ok(paginas);
