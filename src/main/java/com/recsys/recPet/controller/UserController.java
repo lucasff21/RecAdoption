@@ -57,12 +57,6 @@ public class UserController {
 
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
-        User user = usuarioService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(user);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         usuarioService.delete(id);
