@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -22,6 +23,9 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${front.url}")
+    private String urlFront;
+
     public void sendSimpleEmail(String emailDestinatario, String nomeDestinatario, String token)
             throws MessagingException, UnsupportedEncodingException {
 
@@ -35,11 +39,13 @@ public class EmailService {
         email.setSubject(MAIL_SUBJECT);
         email.setFrom(new InternetAddress(mailFrom, mailFromName));
 
-        String link = "http://localhost:3000/recuperar-senha?token=" + token;
+        String link =  this.urlFront + "/recuperar-senha?token=" + token;
 
         String corpo = String.format(
-                "Olá, %s!\n\nRecebemos seu pedido para recuperação de senha. " +
-                        "Clique no link abaixo para redefinir sua senha:\n\n%s\n\nEquipe Veridt",
+                "Olá, %s!\n" +
+                        "\n" +
+                        "Recebemos seu pedido para recuperação de senha. " +
+                        "Clique no link abaixo para redefinir sua senha:\n\n%s\n\nEquipe RecPet",
                 nomeDestinatario,
                 link
         );
