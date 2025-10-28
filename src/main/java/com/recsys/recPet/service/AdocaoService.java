@@ -3,6 +3,7 @@ package com.recsys.recPet.service;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
+import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.AdocaoRepository;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.repository.specification.AdocaoSpecification;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -34,18 +36,18 @@ public class AdocaoService {
         return adocaoRepository.save(adocao);
     }
 
-    public Adocao findById(Long id){
-        return adocaoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Adoção não encontrada"));
+    public Adocao findByIdAndUser(Long id, User usuario) {
+        Adocao adocao = adocaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Adoção não encontrada com"));
+        if (!adocao.getUser().getId().equals(usuario.getId())) {
+            throw new AccessDeniedException("Usuário não autorizado para acessar este recurso.");
+        }
+        return adocao;
     }
 
-    public Adocao update(Adocao adocao){
-        Optional<Adocao> adocaoOptional = Optional.ofNullable(findById(adocao.getId()));
-
-        if(adocaoOptional.isPresent()){
-            return adocaoRepository.save(adocao);
-        } else {
-            throw new EntityNotFoundException("Adoção não encontrada");
-        }
+    public Adocao update(Long id, User usuario){
+        Adocao adocaoExistente = findByIdAndUser(id, usuario);
+        return adocaoRepository.save(adocaoExistente);
     }
 
     public PageImpl<AdocaoResponseDTO> findAllAdocoes(AdocaoStatus status, String termo, Pageable pageable) {

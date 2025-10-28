@@ -6,10 +6,10 @@ import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -39,61 +39,39 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping("/create")
     public ResponseEntity<Void> createUser(@Valid @RequestBody UsuarioAdotanteCreateDTO createUserDto) {
         usuarioService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserDTO userDTO){
-        User user  = new User();
-        BeanUtils.copyProperties(userDTO, user);
-        user.setId(id);
-        User userUpdate = usuarioService.update(user);
-
-        return ResponseEntity.status(HttpStatus.OK).body(userUpdate);
-
-    }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        usuarioService.delete(id);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> delete( @AuthenticationPrincipal User usuarioAutenticado) {
+        usuarioService.delete(usuarioAutenticado.getId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/findbyemail/{email}")
-    public ResponseEntity<?> findByEmail(@PathVariable String email){
-        try {
-            User user = usuarioService.findByEmail(email);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                   new UsuarioResponseDTO(user)
-            );
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário não encontrado");
-        }
-    }
-
     @GetMapping("/me")
-    public ResponseEntity<UsuarioResponseDTO> buscarMeuPerfil(Authentication authentication) {
-        User usuarioAutenticado = (User) authentication.getPrincipal();
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UsuarioResponseDTO> buscarMeuPerfil( @AuthenticationPrincipal User usuarioAutenticado) {
         UsuarioResponseDTO perfil = usuarioService.buscarPerfilPorId(usuarioAutenticado.getId());
         return ResponseEntity.ok(perfil);
     }
 
     @PutMapping("/me")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UsuarioResponseDTO> atualizarMeuPerfil(
-            Authentication authentication,
+            @AuthenticationPrincipal User usuarioAutenticado,
             @Valid @RequestBody UsuarioUpdateDTO usuarioAtualizacaoDTO
     ) {
-        User usuarioAutenticado = (User) authentication.getPrincipal();
         UsuarioResponseDTO usuarioAtualizado = usuarioService.atualizarPerfil(usuarioAutenticado.getId(), usuarioAtualizacaoDTO);
         return ResponseEntity.ok(usuarioAtualizado);
     }
 
-    @PostMapping("/password-reset/request")
-    public ResponseEntity<?> requestPasswordReset(@RequestParam("email") String email) {
+    @PostMapping("/password-reset")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> requestPasswordReset(@RequestBody String email) {
         try {
             User user = usuarioService.findByEmail(email);
             usuarioService.setValuesResetPassword(user);
@@ -106,13 +84,14 @@ public class UserController {
     }
 
     @PutMapping("/new-password")
-    public ResponseEntity<?> resetPassword(@RequestParam("password") String password,
-                                           @RequestParam("tokenReset") String token) {
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> resetPassword(@RequestBody String password,
+                                           @RequestBody String token) {
         try {
             usuarioService.resetNewPassword(password, token);
             return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link."); // evita exposição
+            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado");
         }

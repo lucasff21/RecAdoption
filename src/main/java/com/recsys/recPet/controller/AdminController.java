@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -29,6 +30,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -128,7 +130,6 @@ public class AdminController {
         Page<AdocaoResponseDTO> adocoes = adocaoService.findAdocoesByAnimalId(id, pageable);
         return ResponseEntity.ok(adocoes);
     }
-
 
     @GetMapping("/paginas")
     public ResponseEntity<Page<PaginaResponseDTO>> listarPaginas(

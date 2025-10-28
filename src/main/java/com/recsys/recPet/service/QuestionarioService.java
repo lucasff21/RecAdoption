@@ -1,6 +1,8 @@
 package com.recsys.recPet.service;
 
+import com.recsys.recPet.exception.handler.ResourceNotFoundException;
 import com.recsys.recPet.model.Questionario;
+import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.QuestionarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -40,16 +42,23 @@ public class QuestionarioService {
         return questionarioRepository.findAll();
     }
 
-    public void delete(Long id){
-        Questionario questionario = findById(id);
+    public void delete(Long id, User user) {
+        Questionario questionario = questionarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
+
+        if (!questionario.getUser().getId().equals(user.getId())) {
+            throw new  ResourceNotFoundException("Questionário não encontrado");
+        }
+
         questionarioRepository.delete(questionario);
     }
 
     public Questionario findByUser(Long id){
-        return questionarioRepository.findByUser_Id(id);
+        return questionarioRepository.findByUserId(id);
     }
 
-    public Questionario getQuestionarioByEmail(String email) {
-        return questionarioRepository.findByUserEmail(email);
+    public Questionario getQuestionarioByUser(User user){
+        return questionarioRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
     }
 }

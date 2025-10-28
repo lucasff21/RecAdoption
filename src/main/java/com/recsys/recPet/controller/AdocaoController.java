@@ -4,8 +4,7 @@ import com.recsys.recPet.dto.adocao.AdocaoDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.AdocaoService;
@@ -19,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/adocao")
+@PreAuthorize("isAuthenticated()")
 public class AdocaoController {
 
     private final AdocaoService adocaoService;
@@ -45,13 +45,10 @@ public class AdocaoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Adocao> update(@PathVariable Long id, @RequestBody AdocaoDTO adocaoDTO) {
-        Adocao adocao = new Adocao();
-        BeanUtils.copyProperties(adocaoDTO, adocao);
-        adocao.setId(id);
-        Adocao adocaoUpdate = adocaoService.update(adocao);
+    public ResponseEntity<Adocao> update(@PathVariable Long id, @AuthenticationPrincipal User usuario) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(adocaoUpdate);
+        Adocao adocaoAtualizada = adocaoService.update(id, usuario);
+        return ResponseEntity.ok(adocaoAtualizada);
     }
 
     @GetMapping
@@ -61,9 +58,9 @@ public class AdocaoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Adocao> findById(@PathVariable Long id) {
-        Adocao adocao = adocaoService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(adocao);
+    public ResponseEntity<AdocaoResponseDTO> findById(@PathVariable Long id, @AuthenticationPrincipal User usuario) {
+        Adocao adocao = adocaoService.findByIdAndUser(id, usuario);
+        return ResponseEntity.status(HttpStatus.OK).body(AdocaoResponseDTO.fromEntity(adocao));
     }
 
     @DeleteMapping("/{id}")

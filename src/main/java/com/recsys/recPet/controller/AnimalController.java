@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cachorro")
+@RequestMapping("/api/animais")
 public class AnimalController {
 
     private final AnimalService animalService;
@@ -29,7 +30,7 @@ public class AnimalController {
         this.animalService = animalService;
     }
 
-    @GetMapping("/findall")
+    @GetMapping()
     public ResponseEntity<Page<AnimalResponseDTO>> findAll(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String sexo,
@@ -62,13 +63,15 @@ public class AnimalController {
         }
     }
 
-    @PostMapping(value = "/create", consumes = "multipart/form-data")
+    @PostMapping(consumes = "multipart/form-data")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Animal> save(@Valid @ModelAttribute AnimalCreateDTO animalDTO) throws IOException {
        animalService.criarAnimal(animalDTO);
        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Animal> atualizarAnimal(@PathVariable Long id, @Valid @ModelAttribute AnimalUpdateDTO animalDTO) throws IOException {
         Animal animalAtualizado = animalService.atualizarAnimal(id, animalDTO);
         return ResponseEntity.status(HttpStatus.OK).body(animalAtualizado);

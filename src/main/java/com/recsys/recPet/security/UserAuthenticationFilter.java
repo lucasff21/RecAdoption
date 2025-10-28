@@ -52,8 +52,6 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                System.out.println("AUTENTICADO: " + user.getEmail());
-
             } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro interno no servidor");
                 return;
