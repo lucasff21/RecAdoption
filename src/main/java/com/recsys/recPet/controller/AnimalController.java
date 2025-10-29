@@ -78,6 +78,7 @@ public class AnimalController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         animalService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

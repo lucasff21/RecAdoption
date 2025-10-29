@@ -1,6 +1,5 @@
 package com.recsys.recPet.security;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +28,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.io.IOException;
 import java.util.List;
 
-
 @Configuration
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
@@ -40,13 +38,14 @@ public class SecurityConfiguration {
     private final UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/api/cachorro/findall",
+            "/api/animais/*",
+            "/api/animais",
             "/users/create",
             "/users/login",
-            "/users/password-reset/request",
+            "/users/password-reset",
             "/users/new-password",
             "/paginas/{nome}",
-            "/api/cachorro/caracteristicas"
+            "/api/animais/caracteristicas"
     };
 
     public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
@@ -57,12 +56,15 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
+                )
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
@@ -83,7 +85,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(urlFront));
-        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // Seja explícito nos métodos
         configuration.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -95,9 +97,11 @@ public class SecurityConfiguration {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
+            response.setContentType("application/json;charset=UTF-8"); // Definir charset é uma boa prática
             response.getWriter().write(String.format("{\"status\":%d,\"error\":\"%s\",\"message\":\"%s\"}",
-                    HttpServletResponse.SC_UNAUTHORIZED, HttpStatus.UNAUTHORIZED.getReasonPhrase(), "Credenciais de autenticação inválidas ou ausentes."));
+                    HttpServletResponse.SC_UNAUTHORIZED,
+                    HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                    "Credenciais de autenticação inválidas ou ausentes. Verifique o token JWT."));
             response.getWriter().flush();
         }
     }
@@ -106,9 +110,11 @@ public class SecurityConfiguration {
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            response.setContentType("application/json");
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(String.format("{\"status\":%d,\"error\":\"%s\",\"message\":\"%s\"}",
-                    HttpServletResponse.SC_FORBIDDEN, HttpStatus.FORBIDDEN.getReasonPhrase(), "Você não tem permissão para acessar este recurso."));
+                    HttpServletResponse.SC_FORBIDDEN,
+                    HttpStatus.FORBIDDEN.getReasonPhrase(),
+                    "Acesso negado. Você não tem permissão para acessar este recurso."));
             response.getWriter().flush();
         }
     }

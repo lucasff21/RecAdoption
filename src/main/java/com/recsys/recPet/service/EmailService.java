@@ -3,7 +3,6 @@ package com.recsys.recPet.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,14 +16,17 @@ public class EmailService {
 
     private static final String MAIL_SUBJECT = "Recuperar Senha!";
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Value("${front.url}")
     private String urlFront;
+
+    public EmailService(Environment environment, JavaMailSender mailSender) {
+        this.environment = environment;
+        this.mailSender = mailSender;
+    }
 
     public void sendSimpleEmail(String emailDestinatario, String nomeDestinatario, String token)
             throws MessagingException, UnsupportedEncodingException {
