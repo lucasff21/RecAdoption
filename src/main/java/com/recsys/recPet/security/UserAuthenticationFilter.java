@@ -10,10 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
-import java.util.Arrays;
 
 @Component
 public class UserAuthenticationFilter extends OncePerRequestFilter {
@@ -29,29 +27,24 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (checkIfEndpointIsNotPublic(request)) {
-            String token = recoveryToken(request);
+        String token = recoveryToken(request);
 
-            if (token == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token não encontrado.");
-                return;
-            }
-
+        if (token != null) {
             try {
                 String subject = jwtTokenProvider.getSubjectFromToken(token);
-
                 if (subject == null) {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token inválido.");
                     return;
                 }
 
                 User user = userRepository.findByEmail(subject)
-                        .orElseThrow(() -> new RuntimeException("User not found"));
+                        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
             } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Erro interno no servidor");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Falha na autenticação." );
                 return;
             }
         }
@@ -60,22 +53,9 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
     }
     private String recoveryToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader("Authorization");
-        System.out.println("Authorization Header: " + authorizationHeader);
-
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             return authorizationHeader.substring(7);
         }
         return null;
     }
-
-
-    private boolean checkIfEndpointIsNotPublic(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-
-        AntPathMatcher pathMatcher = new AntPathMatcher();
-
-        return Arrays.stream(SecurityConfiguration.ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED)
-                .noneMatch(pattern -> pathMatcher.match(pattern, requestURI));
-    }
-
 }

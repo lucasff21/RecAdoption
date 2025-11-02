@@ -38,8 +38,7 @@ public class SecurityConfiguration {
     private final UserAuthenticationFilter userAuthenticationFilter;
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/api/animais/*",
-            "/api/animais",
+            "/api/animais/**",
             "/users/create",
             "/users/login",
             "/users/password-reset",
@@ -97,11 +96,11 @@ public class SecurityConfiguration {
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json;charset=UTF-8"); // Definir charset é uma boa prática
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(String.format("{\"status\":%d,\"error\":\"%s\",\"message\":\"%s\"}",
                     HttpServletResponse.SC_UNAUTHORIZED,
                     HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                    "Credenciais de autenticação inválidas ou ausentes. Verifique o token JWT."));
+                    "Credenciais de autenticação inválidas ou ausentes"));
             response.getWriter().flush();
         }
     }
