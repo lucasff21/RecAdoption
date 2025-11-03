@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/users")
@@ -39,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Void> createUser(@Valid @RequestBody UsuarioAdotanteCreateDTO createUserDto) {
         usuarioService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -70,25 +72,22 @@ public class UserController {
     }
 
     @PostMapping("/password-reset")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> requestPasswordReset(@RequestBody String email) {
+    public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody UsuarioPasswordResetRequestDTO requestDTO) {
         try {
-            User user = usuarioService.findByEmail(email);
+            User user = usuarioService.findByEmail(requestDTO.email());
             usuarioService.setValuesResetPassword(user);
-            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
+            return ResponseEntity.ok(Map.of("message", "Se o e-mail estiver correto, você receberá um link."));
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link."); // evita exposição
+            return ResponseEntity.ok(Map.of("message", "Se o e-mail estiver correto, você receberá um link."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro inesperado");
         }
     }
 
     @PutMapping("/new-password")
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<?> resetPassword(@RequestBody String password,
-                                           @RequestBody String token) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody UsuarioNewPasswordDTO requestDTO) {
         try {
-            usuarioService.resetNewPassword(password, token);
+            usuarioService.resetNewPassword(requestDTO.password(), requestDTO.token());
             return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
         } catch (EntityNotFoundException e) {
             return ResponseEntity.ok("Se o e-mail estiver correto, você receberá um link.");
