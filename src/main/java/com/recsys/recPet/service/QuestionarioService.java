@@ -1,6 +1,6 @@
 package com.recsys.recPet.service;
 
-import com.recsys.recPet.exception.handler.ResourceNotFoundException;
+import com.recsys.recPet.exception.ResourceNotFoundException;
 import com.recsys.recPet.model.Questionario;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.QuestionarioRepository;
