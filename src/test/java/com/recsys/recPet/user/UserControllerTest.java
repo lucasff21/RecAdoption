@@ -56,7 +56,7 @@ class UserControllerTest {
 
         var requestJson = objectMapper.writeValueAsString(usuarioValido);
 
-        mockMvc.perform(post("/users/create")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isCreated());
@@ -85,7 +85,7 @@ class UserControllerTest {
 
         var requestJson = objectMapper.writeValueAsString(usuarioInvalido);
 
-        mockMvc.perform(post("/users/create")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isBadRequest())
