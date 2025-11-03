@@ -3,10 +3,9 @@ import com.recsys.recPet.enums.animal.Porte;
 import com.recsys.recPet.enums.animal.Sexo;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.AnimalCaracteristica;
-import com.recsys.recPet.model.Caracteristica;
-import jakarta.persistence.criteria.Join;
-
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDate;
@@ -91,13 +90,33 @@ public class AnimalSpecification {
 
     public static Specification<Animal> comCaracteristicasPorId(List<Long> caracteristicaIds) {
         return (root, query, criteriaBuilder) -> {
+
             if (caracteristicaIds == null || caracteristicaIds.isEmpty()) {
                 return criteriaBuilder.conjunction();
             }
-            query.distinct(true);
-            Join<Animal, AnimalCaracteristica> animalCaracteristicasJoin = root.join("animalCaracteristicas");
-            Join<AnimalCaracteristica, Caracteristica> caracteristicaJoin = animalCaracteristicasJoin.join("caracteristica");
-            return caracteristicaJoin.get("id").in(caracteristicaIds);
+
+            List<Predicate> predicados = new ArrayList<>();
+
+            for (Long caracteristicaId : caracteristicaIds) {
+
+                Subquery<Integer> subquery = query.subquery(Integer.class);
+                subquery.select(criteriaBuilder.literal(1));
+                Root<AnimalCaracteristica> subqueryACRoot = subquery.from(AnimalCaracteristica.class);
+
+                subquery.where(
+                        criteriaBuilder.equal(
+                                subqueryACRoot.get("animal"),
+                                root
+                        ),
+                        criteriaBuilder.equal(
+                                subqueryACRoot.get("caracteristica").get("id"),
+                                caracteristicaId
+                        )
+                );
+
+                predicados.add(criteriaBuilder.exists(subquery));
+            }
+            return criteriaBuilder.and(predicados.toArray(new Predicate[0]));
         };
     }
 
