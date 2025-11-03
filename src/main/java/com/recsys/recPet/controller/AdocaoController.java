@@ -29,7 +29,7 @@ public class AdocaoController {
         this.animalService = cachorroService;
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) throws Exception {
         Adocao adocao = new Adocao();
         adocao.setUser(user);

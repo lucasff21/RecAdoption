@@ -49,7 +49,7 @@ public class AdminController {
         this.paginaService = paginaService;
     }
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<Void> createUser(@Valid @RequestBody CreateUserDTO createUserDto) {
         adminService.createUser(createUserDto);
         return new ResponseEntity<>(HttpStatus.CREATED);
