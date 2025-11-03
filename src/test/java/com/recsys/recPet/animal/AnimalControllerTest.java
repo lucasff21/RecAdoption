@@ -59,7 +59,7 @@ public class AnimalControllerTest {
                 .thenReturn(Map.of("secure_url", "http://test-image.com"));
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                        .multipart(HttpMethod.POST, "/api/cachorro/create")
+                        .multipart(HttpMethod.POST, "/api/animais")
                         .file(imagem)
                         .param("nome", "Rex")
                         .param("idade", "2023-01-02")
@@ -105,7 +105,7 @@ public class AnimalControllerTest {
         Animal cachorro = animalRepository.save(cachorroTeste);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                        .multipart(HttpMethod.PUT, "/api/cachorro/" + cachorro.getId())
+                        .multipart(HttpMethod.PUT, "/api/animais/" + cachorro.getId())
                         .file(imagemEditada)
                         .param("nome", "Nora")
                         .param("sexo", "FEMEA")
