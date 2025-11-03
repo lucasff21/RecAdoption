@@ -35,7 +35,7 @@ public class AnimalController {
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String sexo,
             @RequestParam(required = false) String porte,
-            @RequestParam(required = false) List<Long> caracteristicas,
+            @RequestParam(value = "caracteristicasIds", required = false) List<Long> caracteristicas,
             @RequestParam(required = false) String faixaEtaria,
             @RequestParam(defaultValue = "0") int page
     ) {
