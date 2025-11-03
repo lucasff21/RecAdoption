@@ -42,7 +42,6 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-
             } catch (Exception e) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Falha na autenticação." );
                 return;

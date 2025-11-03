@@ -39,12 +39,8 @@ public class SecurityConfiguration {
 
     public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
             "/api/animais/**",
-            "/users/create",
-            "/users/login",
-            "/users/password-reset",
-            "/users/new-password",
+            "/users/**",
             "/paginas/{nome}",
-            "/api/animais/caracteristicas"
     };
 
     public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
@@ -84,7 +80,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(urlFront));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // Seja explícito nos métodos
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
