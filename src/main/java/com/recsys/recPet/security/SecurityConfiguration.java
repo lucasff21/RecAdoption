@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,12 +38,6 @@ public class SecurityConfiguration {
 
     private final UserAuthenticationFilter userAuthenticationFilter;
 
-    public static final String[] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
-            "/api/animais/**",
-            "/users/**",
-            "/paginas/{nome}",
-    };
-
     public SecurityConfiguration(UserAuthenticationFilter userAuthenticationFilter) {
         this.userAuthenticationFilter = userAuthenticationFilter;
     }
@@ -58,7 +53,14 @@ public class SecurityConfiguration {
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
                 )
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/animais").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/animais/caracteristicas").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/animais/{id}", "/api/animais/{id}/").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/password-reset").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/users/new-password").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/paginas/{nome}").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(userAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
