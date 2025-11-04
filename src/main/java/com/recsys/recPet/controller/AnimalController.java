@@ -64,21 +64,21 @@ public class AnimalController {
     }
 
     @PostMapping(consumes = "multipart/form-data")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Animal> save(@Valid @ModelAttribute AnimalCreateDTO animalDTO) throws IOException {
        animalService.criarAnimal(animalDTO);
        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping(value = "/{id}", consumes = "multipart/form-data")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Animal> atualizarAnimal(@PathVariable Long id, @Valid @ModelAttribute AnimalUpdateDTO animalDTO) throws IOException {
         Animal animalAtualizado = animalService.atualizarAnimal(id, animalDTO);
         return ResponseEntity.status(HttpStatus.OK).body(animalAtualizado);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         animalService.delete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
