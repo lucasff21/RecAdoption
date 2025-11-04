@@ -12,6 +12,7 @@ import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
+import com.recsys.recPet.model.User;
 import com.recsys.recPet.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -30,7 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
-@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAnyAuthority('ADMIN')")
 public class AdminController {
 
     private final AdminService adminService;
@@ -55,7 +56,7 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         adminService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -161,5 +162,20 @@ public class AdminController {
     public ResponseEntity<PaginaResponseDTO> atualizarPagina(@PathVariable Long id, @Valid @RequestBody PaginaRequestDTO paginaDTO) {
         PaginaResponseDTO paginaAtualizada = paginaService.atualizarPagina(id, paginaDTO);
         return ResponseEntity.ok(paginaAtualizada);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<UsuarioResponseDTO> getUserById(@PathVariable Long id) {
+        User usuario = userService.findById(id);
+        return ResponseEntity.ok(new UsuarioResponseDTO(usuario));
+    }
+
+    @GetMapping("/users/{id}/adocoes")
+    public ResponseEntity<Page<AdocaoResponseDTO>> getAdocoesByUserId(
+            @PathVariable Long id,
+            @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<AdocaoResponseDTO> adocoes = adocaoService.findPageByUserId(id, pageable);
+        return ResponseEntity.ok(adocoes);
     }
 }

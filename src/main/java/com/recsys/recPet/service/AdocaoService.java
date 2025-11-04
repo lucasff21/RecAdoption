@@ -130,4 +130,9 @@ public class AdocaoService {
         return adocaoRepository.findByAnimalId(animalId, pageable)
                 .map(AdocaoResponseDTO::fromEntity);
     }
+
+    public Page<AdocaoResponseDTO> findPageByUserId(Long userId, Pageable pageable) {
+        Page<Adocao> adocaoPage = adocaoRepository.findByUserId(userId, pageable);
+        return adocaoPage.map(AdocaoResponseDTO::fromEntity);
+    }
 }

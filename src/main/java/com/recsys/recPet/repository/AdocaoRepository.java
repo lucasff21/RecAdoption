@@ -15,6 +15,7 @@ import java.util.Optional;
 @Repository
 public interface AdocaoRepository extends JpaRepository<Adocao, Long>, JpaSpecificationExecutor<Adocao> {
     List<Adocao> findByUserId(Long userId);
+    Page<Adocao> findByUserId(Long userId, Pageable pageable);
     List<Adocao> findByAnimalAndIdNotAndStatusIn(Animal animal, Long idExcluido, List<AdocaoStatus> statuses);
     Optional<Adocao> findByIdAndUserId(Long id, Long userId);
     Page<Adocao> findByAnimalId(Long animalId, Pageable pageable);
