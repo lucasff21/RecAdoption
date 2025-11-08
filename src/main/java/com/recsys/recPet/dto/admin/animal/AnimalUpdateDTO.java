@@ -35,7 +35,7 @@ public class AnimalUpdateDTO {
 
     private String descricao;
 
-    private boolean disponivelParaAdocao;
+    private Boolean disponivelParaAdocao;
 
     public void updateEntity(Animal animal) {
         Optional.ofNullable(this.nome).ifPresent(animal::setNome);
@@ -44,6 +44,6 @@ public class AnimalUpdateDTO {
         Optional.ofNullable(this.porte).ifPresent(animal::setPorte);
         Optional.ofNullable(this.pelagem).ifPresent(animal::setPelagem);
         Optional.ofNullable(this.descricao).ifPresent(animal::setDescricao);
-        Optional.of(this.disponivelParaAdocao).ifPresent(animal::setDisponivelParaAdocao);
+        Optional.ofNullable(this.disponivelParaAdocao).ifPresent(animal::setDisponivelParaAdocao);
     }
 }
