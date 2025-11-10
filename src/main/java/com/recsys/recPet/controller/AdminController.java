@@ -10,6 +10,7 @@ import com.recsys.recPet.dto.admin.CreateUserDTO;
 import com.recsys.recPet.dto.admin.UpdateRoleDTO;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
+import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.enums.filtro.TipoBusca;
 import com.recsys.recPet.model.Adocao;
 import com.recsys.recPet.model.User;
@@ -103,6 +104,7 @@ public class AdminController {
             @RequestParam(required = false) List<Long> caracteristicas,
             @RequestParam(required = false) String faixaEtaria,
             @RequestParam(required = false) Boolean disponivelParaAdocao,
+            @RequestParam(required = false) Tipo especie,
             @RequestParam(defaultValue = "0") int page
     ){
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -114,6 +116,7 @@ public class AdminController {
                 caracteristicas,
                 faixaEtaria,
                 disponivelParaAdocao,
+                especie,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

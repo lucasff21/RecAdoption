@@ -1,6 +1,7 @@
 package com.recsys.recPet.repository.specification;
 import com.recsys.recPet.enums.animal.Porte;
 import com.recsys.recPet.enums.animal.Sexo;
+import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.AnimalCaracteristica;
 import jakarta.persistence.criteria.Predicate;
@@ -126,6 +127,15 @@ public class AnimalSpecification {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("disponivelParaAdocao"), disponivel);
+        };
+    }
+
+    public static Specification<Animal> comTipo(Tipo tipo) {
+        return (root, query, criteriaBuilder) -> {
+            if (tipo == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("tipo"), tipo);
         };
     }
 }

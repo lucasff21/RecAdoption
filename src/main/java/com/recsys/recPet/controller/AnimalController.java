@@ -4,6 +4,7 @@ import com.recsys.recPet.dto.animal.AnimalResponseDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.CaracteristicaDTO;
+import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.service.AnimalService;
 import jakarta.validation.Valid;
@@ -37,6 +38,7 @@ public class AnimalController {
             @RequestParam(required = false) String porte,
             @RequestParam(value = "caracteristicasIds", required = false) List<Long> caracteristicas,
             @RequestParam(required = false) String faixaEtaria,
+            @RequestParam(required = false) Tipo especie,
             @RequestParam(defaultValue = "0") int page
     ) {
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -47,6 +49,7 @@ public class AnimalController {
                 porte,
                 caracteristicas,
                 faixaEtaria,
+                especie,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

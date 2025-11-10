@@ -5,6 +5,7 @@ import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
 import com.recsys.recPet.dto.animal.CaracteristicaDTO;
+import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.AnimalCaracteristicaId;
 import com.recsys.recPet.model.Caracteristica;
@@ -49,6 +50,7 @@ public class AnimalService {
             String porte,
             List<Long> caracteristicaIds,
             String faixaEtaria,
+            Tipo tipo,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
@@ -57,6 +59,7 @@ public class AnimalService {
                 .and(AnimalSpecification.comSexo(sexo))
                 .and(AnimalSpecification.comPorte(porte))
                 .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
+                .and(AnimalSpecification.comTipo(tipo))
                 .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
@@ -192,6 +195,7 @@ public class AnimalService {
             List<Long> caracteristicaIds,
             String faixaEtaria,
             Boolean disponivelParaAdocao,
+            Tipo especie,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
@@ -200,6 +204,7 @@ public class AnimalService {
                 .and(AnimalSpecification.comSexo(sexo))
                 .and(AnimalSpecification.comPorte(porte))
                 .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
+                .and(AnimalSpecification.comTipo(especie))
                 .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
