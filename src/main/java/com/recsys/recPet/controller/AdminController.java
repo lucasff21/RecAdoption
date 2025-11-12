@@ -1,6 +1,7 @@
 package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
+import com.recsys.recPet.dto.admin.metricas.SistemaMetricasDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
 import com.recsys.recPet.dto.pagina.PaginaRequestDTO;
@@ -40,15 +41,17 @@ public class AdminController {
     private final AdocaoService adocaoService;
     private final AnimalService animalService;
     private final PaginaService paginaService;
+    private final MetricasService metricasService;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, PaginaService paginaService) {
+    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, PaginaService paginaService, MetricasService metricasService) {
         this.adminService = adminService;
         this.userService = userService;
         this.adocaoService = adocaoService;
         this.animalService = animalService;
         this.paginaService = paginaService;
+        this.metricasService = metricasService;
     }
 
     @PostMapping()
@@ -180,5 +183,11 @@ public class AdminController {
 
         Page<AdocaoResponseDTO> adocoes = adocaoService.findPageByUserId(id, pageable);
         return ResponseEntity.ok(adocoes);
+    }
+
+    @GetMapping("/metricas")
+    public ResponseEntity<SistemaMetricasDTO> getSystemMetrics() {
+        SistemaMetricasDTO metrics = metricasService.getSystemMetrics();
+        return ResponseEntity.ok(metrics);
     }
 }

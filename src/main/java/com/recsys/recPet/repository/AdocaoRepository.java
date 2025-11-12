@@ -19,4 +19,5 @@ public interface AdocaoRepository extends JpaRepository<Adocao, Long>, JpaSpecif
     List<Adocao> findByAnimalAndIdNotAndStatusIn(Animal animal, Long idExcluido, List<AdocaoStatus> statuses);
     Optional<Adocao> findByIdAndUserId(Long id, Long userId);
     Page<Adocao> findByAnimalId(Long animalId, Pageable pageable);
+    long countByStatus(AdocaoStatus status);
 }
