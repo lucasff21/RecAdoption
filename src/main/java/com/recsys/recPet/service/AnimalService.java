@@ -32,7 +32,7 @@ public class AnimalService {
     private final AnimalRepository animalRepository;
     private final ImageService imageService;
     private final CaracteristicaRepository caracteristicaRepository;
-    private final AnimalCaracteristicaRepository animalCaracteristicaRepository; // Novo
+    private final AnimalCaracteristicaRepository animalCaracteristicaRepository;
 
     public AnimalService(AnimalRepository animalRepository, ImageService imageService,
                          CaracteristicaRepository caracteristicaRepository,

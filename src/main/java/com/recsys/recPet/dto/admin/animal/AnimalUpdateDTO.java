@@ -11,7 +11,7 @@ import jakarta.validation.constraints.*;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List; // Novo
+import java.util.List;
 import java.util.Optional;
 
 @Getter
