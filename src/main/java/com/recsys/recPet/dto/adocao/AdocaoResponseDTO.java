@@ -1,6 +1,6 @@
 package com.recsys.recPet.dto.adocao;
 
-import com.recsys.recPet.dto.usuario.UsuarioLoginResponseDTO;
+import com.recsys.recPet.dto.usuario.UsuarioBaseResponseDTO;
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
@@ -22,7 +22,7 @@ public class AdocaoResponseDTO {
     private String observacoes;
 
     private AnimalResponseDTO animal;
-    private UsuarioLoginResponseDTO usuario;
+    private UsuarioBaseResponseDTO usuario;
 
 
     public static AdocaoResponseDTO fromEntity(Adocao adocao) {
@@ -37,7 +37,7 @@ public class AdocaoResponseDTO {
         adocaoResponseDTO.setAnimal(AnimalResponseDTO.fromEntity(adocao.getAnimal()));
         adocaoResponseDTO.setCreatedAt(adocao.getCreatedAt());
         adocaoResponseDTO.setUpdatedAt(adocao.getUpdatedAt());
-        adocaoResponseDTO.setUsuario(UsuarioLoginResponseDTO.fromEntity(adocao.getUser()));
+        adocaoResponseDTO.setUsuario(UsuarioBaseResponseDTO.fromEntity(adocao.getUser()));
         adocaoResponseDTO.setObservacoes(adocao.getObservacoes());
 
         return adocaoResponseDTO;

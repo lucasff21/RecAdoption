@@ -1,14 +1,13 @@
 package com.recsys.recPet.service;
 
-import com.recsys.recPet.exception.ResourceNotFoundException;
+import com.recsys.recPet.dto.questionario.QuestionarioCreateDTO;
+import com.recsys.recPet.dto.questionario.QuestionarioResponseDTO;
 import com.recsys.recPet.model.Questionario;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.QuestionarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class QuestionarioService {
@@ -19,46 +18,51 @@ public class QuestionarioService {
         this.questionarioRepository = questionarioRepository;
     }
 
-    public Questionario save(Questionario questionario) {
-        return questionarioRepository.save(questionario);
+    @Transactional(readOnly = true)
+    public QuestionarioResponseDTO getQuestionarioByUser(User user) {
+        return questionarioRepository.findByUserId(user.getId())
+                .map(QuestionarioResponseDTO::new)
+                .orElseThrow(() -> new EntityNotFoundException("Questionário não encontrado para este usuário."));
     }
 
-    public Questionario findById(Long id) {
-        return questionarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Questionario não encontrado"));
-    }
 
-    public Questionario update(Questionario questionario) {
-        Optional<Questionario> questionarioOptional = questionarioRepository.findById(questionario.getId());
+    @Transactional
+    public QuestionarioResponseDTO create(User user, QuestionarioCreateDTO dto) {
 
-        if(questionarioOptional.isPresent()){
-            return questionarioRepository.save(questionario);
-        } else {
-            throw new EntityNotFoundException("Questionario não encontrada");
-        }
-    }
-
-    public List<Questionario> findAll(){
-        return questionarioRepository.findAll();
-    }
-
-    public void delete(Long id, User user) {
-        Questionario questionario = questionarioRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
-
-        if (!questionario.getUser().getId().equals(user.getId())) {
-            throw new  ResourceNotFoundException("Questionário não encontrado");
+        if (questionarioRepository.findByUserId(user.getId()).isPresent()) {
+            throw new IllegalStateException("O usuário já possui um questionário. Use a rota de atualização (PUT).");
         }
 
-        questionarioRepository.delete(questionario);
+        Questionario questionario = new Questionario();
+        questionario.setUser(user);
+
+        mapDtoToEntity(dto, questionario);
+
+        Questionario salvo = questionarioRepository.save(questionario);
+        return new QuestionarioResponseDTO(salvo);
     }
 
-    public Questionario findByUser(Long id){
-        return questionarioRepository.findByUserId(id);
+    @Transactional
+    public QuestionarioResponseDTO update(User user, QuestionarioCreateDTO dto) {
+        Questionario questionario = questionarioRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Questionário não encontrado para este usuário. Crie um primeiro (POST)."));
+
+        mapDtoToEntity(dto, questionario);
+
+        Questionario salvo = questionarioRepository.save(questionario);
+        return new QuestionarioResponseDTO(salvo);
     }
 
-    public Questionario getQuestionarioByUser(User user){
-        return questionarioRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Questionário não encontrado"));
+    private void mapDtoToEntity(QuestionarioCreateDTO dto, Questionario questionario) {
+        questionario.setMoradia(dto.getMoradia());
+        questionario.setTelasProtecao(dto.getTelasProtecao());
+        questionario.setTodosDeAcordo(dto.getTodosDeAcordo());
+        questionario.setQtdCaes(dto.getQtdCaes());
+        questionario.setQtdGatos(dto.getQtdGatos());
+        questionario.setQtdOutros(dto.getQtdOutros());
+        questionario.setCienteCustos(dto.getCienteCustos());
+        questionario.setTermoCompromissoLongoPrazo(dto.getTermoCompromissoLongoPrazo());
+        questionario.setTermoSaudeBemEstar(dto.getTermoSaudeBemEstar());
+        questionario.setTermoPacienciaAdaptacao(dto.getTermoPacienciaAdaptacao());
     }
 }

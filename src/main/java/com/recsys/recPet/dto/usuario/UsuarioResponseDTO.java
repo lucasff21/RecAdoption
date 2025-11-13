@@ -1,6 +1,7 @@
 package com.recsys.recPet.dto.usuario;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
+import com.recsys.recPet.dto.questionario.QuestionarioResponseDTO;
 import com.recsys.recPet.enums.TipoUsuario;
 import com.recsys.recPet.helpers.StringHelper;
 import com.recsys.recPet.model.Endereco;
@@ -28,6 +29,7 @@ public class UsuarioResponseDTO {
     private Endereco endereco;
     private LocalDateTime createdAt;
     private List<AdocaoResponseDTO> solicitacoes;
+    private QuestionarioResponseDTO questionario;
 
     public UsuarioResponseDTO(User user) {
         this.id = user.getId();
@@ -41,6 +43,11 @@ public class UsuarioResponseDTO {
         this.endereco = user.getEndereco();
         this.createdAt = user.getCreatedAt();
         this.solicitacoes = user.getAdocoes().stream().map(AdocaoResponseDTO::fromEntity).toList();
+        if (user.getQuestionario() != null) {
+            this.questionario = new QuestionarioResponseDTO(user.getQuestionario());
+        } else {
+            this.questionario = null;
+        }
     }
 
     @JsonProperty("cpf")
