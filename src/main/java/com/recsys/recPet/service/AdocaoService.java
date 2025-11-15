@@ -1,10 +1,13 @@
 package com.recsys.recPet.service;
 
+import com.recsys.recPet.dto.admin.AdocaoResponseAdminDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
 import com.recsys.recPet.enums.adocao.AdocaoStatus;
 import com.recsys.recPet.model.Adocao;
+import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.AdocaoRepository;
+import com.recsys.recPet.repository.AnimalRepository;
 import com.recsys.recPet.repository.UserRepository;
 import com.recsys.recPet.repository.specification.AdocaoSpecification;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,11 +28,42 @@ import java.util.Optional;
 public class AdocaoService {
     private final AdocaoRepository adocaoRepository;
     private final UserRepository userRepository;
+    private final AnimalRepository animalRepository;
 
     public AdocaoService(AdocaoRepository adocaoRepository,
-                         UserRepository userRepository) {
+                         UserRepository userRepository, AnimalRepository animalRepository) {
         this.adocaoRepository = adocaoRepository;
         this.userRepository = userRepository;
+        this.animalRepository = animalRepository;
+    }
+
+    public Adocao criarSolicitacao(Long animalId, User user) {
+        List<AdocaoStatus> statusAbertos = List.of(
+                AdocaoStatus.PENDENTE,
+                AdocaoStatus.EM_ANALISE,
+                AdocaoStatus.APROVADO
+        );
+
+        boolean jaPossuiSolicitacaoAberta = adocaoRepository.existsByUserIdAndAnimalIdAndStatusIn(
+                user.getId(),
+                animalId,
+                statusAbertos
+        );
+
+        if (jaPossuiSolicitacaoAberta) {
+            throw new IllegalStateException("Você já possui uma solicitação em aberto para este animal.");
+        }
+
+        Animal animal = animalRepository.findById(animalId)
+                .orElseThrow(() -> new EntityNotFoundException("Animal não encontrado!"));
+
+        Adocao adocao = new Adocao();
+        adocao.setUser(user);
+        adocao.setAnimal(animal);
+        adocao.setStatus(AdocaoStatus.PENDENTE);
+
+
+        return adocaoRepository.save(adocao);
     }
 
     public Adocao save(Adocao adocao){
@@ -50,15 +84,15 @@ public class AdocaoService {
         return adocaoRepository.save(adocaoExistente);
     }
 
-    public PageImpl<AdocaoResponseDTO> findAllAdocoes(AdocaoStatus status, String termo, Pageable pageable) {
+    public PageImpl<AdocaoResponseAdminDTO> findAllAdocoes(AdocaoStatus status, String termo, Pageable pageable) {
         Specification<Adocao> spec = Specification
                 .where(AdocaoSpecification.comStatus(status))
                 .and(AdocaoSpecification.comTermoDeBusca(termo));
 
         Page<Adocao> adocaoPage = adocaoRepository.findAll(spec, pageable);
 
-        List<AdocaoResponseDTO> dtoList = adocaoPage.getContent().stream()
-                .map(AdocaoResponseDTO::fromEntity)
+        List<AdocaoResponseAdminDTO> dtoList = adocaoPage.getContent().stream()
+                .map(AdocaoResponseAdminDTO::fromEntity)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtoList, pageable, adocaoPage.getTotalElements());
@@ -126,9 +160,9 @@ public class AdocaoService {
         adocaoOptional.ifPresent(adocaoRepository::delete);
     }
 
-    public Page<AdocaoResponseDTO> findAdocoesByAnimalId(Long animalId, Pageable pageable) {
+    public Page<AdocaoResponseAdminDTO> findAdocoesByAnimalId(Long animalId, Pageable pageable) {
         return adocaoRepository.findByAnimalId(animalId, pageable)
-                .map(AdocaoResponseDTO::fromEntity);
+                .map(AdocaoResponseAdminDTO::fromEntity);
     }
 
     public Page<AdocaoResponseDTO> findPageByUserId(Long userId, Pageable pageable) {

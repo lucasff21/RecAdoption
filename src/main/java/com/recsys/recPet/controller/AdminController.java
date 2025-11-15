@@ -1,5 +1,6 @@
 package com.recsys.recPet.controller;
 
+import com.recsys.recPet.dto.admin.AdocaoResponseAdminDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
 import com.recsys.recPet.dto.admin.metricas.SistemaMetricasDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
@@ -83,13 +84,13 @@ public class AdminController {
     }
 
     @GetMapping("/adocoes")
-    public ResponseEntity<Page<AdocaoResponseDTO>> getAllAdocoes(
+    public ResponseEntity<Page<AdocaoResponseAdminDTO>> getAllAdocoes(
             @RequestParam(required = false) AdocaoStatus status,
             @RequestParam(required = false) String termo,
             Pageable pageable
     ) {
 
-        Page<AdocaoResponseDTO> adocaoDtoPage = adocaoService.findAllAdocoes(status, termo, pageable);
+        Page<AdocaoResponseAdminDTO> adocaoDtoPage = adocaoService.findAllAdocoes(status, termo, pageable);
         return ResponseEntity.ok(adocaoDtoPage);
     }
 
@@ -132,9 +133,9 @@ public class AdminController {
     }
 
     @GetMapping("/animais/{id}/adocoes")
-    public ResponseEntity<Page<AdocaoResponseDTO>> getAdocoesByAnimalId(@PathVariable Long id,  @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<Page<AdocaoResponseAdminDTO>> getAdocoesByAnimalId(@PathVariable Long id,  @RequestParam(defaultValue = "0") int page) {
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
-        Page<AdocaoResponseDTO> adocoes = adocaoService.findAdocoesByAnimalId(id, pageable);
+        Page<AdocaoResponseAdminDTO> adocoes = adocaoService.findAdocoesByAnimalId(id, pageable);
         return ResponseEntity.ok(adocoes);
     }
 

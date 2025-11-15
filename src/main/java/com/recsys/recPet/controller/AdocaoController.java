@@ -22,26 +22,16 @@ import java.util.List;
 public class AdocaoController {
 
     private final AdocaoService adocaoService;
-    private final AnimalService animalService;
 
-    public AdocaoController(AdocaoService adocaoService, AnimalService cachorroService) {
+    public AdocaoController(AdocaoService adocaoService) {
         this.adocaoService = adocaoService;
-        this.animalService = cachorroService;
     }
 
     @PostMapping()
-    public ResponseEntity<Adocao> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) throws Exception {
-        Adocao adocao = new Adocao();
-        adocao.setUser(user);
-        adocao.setStatus(AdocaoStatus.PENDENTE);
-        Animal animal = animalService.findById(adocaoDTO.animalId());
-        if (animal == null) {
-            throw new IllegalArgumentException("Animal não encontrado!");
-        }
-        adocao.setAnimal(animal);
-        BeanUtils.copyProperties(adocaoDTO, adocao);
-        Adocao adocaoCreated = adocaoService.save(adocao);
-        return ResponseEntity.status(HttpStatus.CREATED).body(adocaoCreated);
+    public ResponseEntity<AdocaoResponseDTO> save(@RequestBody AdocaoDTO adocaoDTO, @AuthenticationPrincipal User user) throws Exception {
+        Adocao adocaoCriada = adocaoService.criarSolicitacao(adocaoDTO.animalId(), user);
+        AdocaoResponseDTO responseDTO = AdocaoResponseDTO.fromEntity(adocaoCriada);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @PutMapping("/{id}")
