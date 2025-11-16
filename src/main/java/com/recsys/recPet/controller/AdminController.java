@@ -182,11 +182,11 @@ public class AdminController {
     }
 
     @GetMapping("/users/{id}/adocoes")
-    public ResponseEntity<Page<AdocaoResponseDTO>> getAdocoesByUserId(
+    public ResponseEntity<Page<AdocaoResponseAdminDTO>> getAdocoesByUserId(
             @PathVariable Long id,
             @PageableDefault(size = DEFAULT_PAGE_SIZE, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Page<AdocaoResponseDTO> adocoes = adocaoService.findPageByUserId(id, pageable);
+        Page<AdocaoResponseAdminDTO> adocoes = adocaoService.findPageByUserId(id, pageable);
         return ResponseEntity.ok(adocoes);
     }
 

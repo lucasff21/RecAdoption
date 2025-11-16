@@ -165,8 +165,8 @@ public class AdocaoService {
                 .map(AdocaoResponseAdminDTO::fromEntity);
     }
 
-    public Page<AdocaoResponseDTO> findPageByUserId(Long userId, Pageable pageable) {
+    public Page<AdocaoResponseAdminDTO> findPageByUserId(Long userId, Pageable pageable) {
         Page<Adocao> adocaoPage = adocaoRepository.findByUserId(userId, pageable);
-        return adocaoPage.map(AdocaoResponseDTO::fromEntity);
+        return adocaoPage.map(AdocaoResponseAdminDTO::fromEntity);
     }
 }
