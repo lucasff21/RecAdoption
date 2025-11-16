@@ -5,12 +5,15 @@ import com.recsys.recPet.enums.animal.Porte;
 import com.recsys.recPet.enums.animal.Sexo;
 import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
+import com.recsys.recPet.model.AnimalCaracteristica;
+import com.recsys.recPet.model.Caracteristica;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -56,7 +59,11 @@ public class AnimalResponseDTO {
 
         if (animal.getAnimalCaracteristicas() != null) {
             this.caracteristicas = animal.getAnimalCaracteristicas().stream()
-                    .map(ac -> CaracteristicaDTO.fromEntity(ac.getCaracteristica()))
+                    .filter(Objects::nonNull)
+                    .map(AnimalCaracteristica::getCaracteristica)
+                    .filter(Objects::nonNull)
+                    .filter(Caracteristica::getAtivo)
+                    .map(CaracteristicaDTO::fromEntity)
                     .collect(Collectors.toList());
         } else {
             this.caracteristicas = List.of();
