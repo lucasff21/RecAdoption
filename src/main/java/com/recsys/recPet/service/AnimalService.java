@@ -50,6 +50,8 @@ public class AnimalService {
             List<Long> caracteristicaIds,
             String faixaEtaria,
             Tipo tipo,
+            Boolean castrado,
+            Boolean vacinado,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
@@ -59,7 +61,9 @@ public class AnimalService {
                 .and(AnimalSpecification.comPorte(porte))
                 .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
                 .and(AnimalSpecification.comTipo(tipo))
-                .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds));
+                .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds))
+                .and(AnimalSpecification.comCastrado(castrado))
+                .and(AnimalSpecification.comVacinado(vacinado));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
 
@@ -188,6 +192,9 @@ public class AnimalService {
             String faixaEtaria,
             Boolean disponivelParaAdocao,
             Tipo especie,
+            Boolean castrado,
+            Boolean vacinado,
+            Boolean vermifugado,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
@@ -197,7 +204,10 @@ public class AnimalService {
                 .and(AnimalSpecification.comPorte(porte))
                 .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
                 .and(AnimalSpecification.comTipo(especie))
-                .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds));
+                .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds))
+                .and(AnimalSpecification.comCastrado(castrado))
+                .and(AnimalSpecification.comVacinado(vacinado))
+                .and(AnimalSpecification.comVermifugado(vermifugado));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
 
@@ -208,6 +218,7 @@ public class AnimalService {
         return new PageImpl<>(dtoList, pageable, animalPage.getTotalElements());
     }
 
+    @Transactional
     public void alterarDisponibilidade(Long animalId, Boolean disponivel) {
         Optional<Animal> animal = animalRepository.findById(animalId) ;
 

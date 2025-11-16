@@ -43,6 +43,8 @@ public class AnimalController {
             @RequestParam(value = "caracteristicasIds", required = false) List<Long> caracteristicas,
             @RequestParam(required = false) String faixaEtaria,
             @RequestParam(required = false) Tipo especie,
+            @RequestParam(required = false) Boolean castrado,
+            @RequestParam(required = false) Boolean vacinado,
             @RequestParam(defaultValue = "0") int page
     ) {
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -54,6 +56,8 @@ public class AnimalController {
                 caracteristicas,
                 faixaEtaria,
                 especie,
+                castrado,
+                vacinado,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

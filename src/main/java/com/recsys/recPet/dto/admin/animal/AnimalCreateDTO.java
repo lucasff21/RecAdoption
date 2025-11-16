@@ -46,6 +46,14 @@ public class AnimalCreateDTO {
 
     private boolean disponivelParaAdocao;
 
+    private boolean castrado;
+    private LocalDate dataUltimaVermifugacao;
+    private LocalDate dataUltimaVacinaAntirrabica;
+    private LocalDate dataUltimaVacinaMultipla;
+    @Size(max = 10, message = "Tipo da vacina deve ter no máximo 20 caracteres")
+    private String tipoVacinaMultipla;
+    private String observacoesMedicas;
+
     public Animal toEntity() {
         Animal animal = new Animal();
         animal.setNome(this.nome);
@@ -56,6 +64,14 @@ public class AnimalCreateDTO {
         animal.setTipo(this.tipo);
         animal.setDescricao(this.descricao);
         animal.setDisponivelParaAdocao(this.disponivelParaAdocao);
+
+        animal.setCastrado(this.castrado);
+        animal.setDataUltimaVermifugacao(this.dataUltimaVermifugacao);
+        animal.setDataUltimaVacinaAntirrabica(this.dataUltimaVacinaAntirrabica);
+        animal.setDataUltimaVacinaMultipla(this.dataUltimaVacinaMultipla);
+        animal.setTipoVacinaMultipla(this.tipoVacinaMultipla);
+        animal.setObservacoesMedicas(this.observacoesMedicas);
+
         return animal;
     }
 }

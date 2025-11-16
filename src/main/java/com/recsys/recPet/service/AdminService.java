@@ -6,6 +6,7 @@ import com.recsys.recPet.model.User;
 import com.recsys.recPet.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AdminService {
@@ -18,6 +19,7 @@ public class AdminService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public void createUser(CreateUserDTO createUserDto) {
         User user = new User();
         user.setNome(createUserDto.getNome());
@@ -27,10 +29,12 @@ public class AdminService {
         userRepository.save(user);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
+    @Transactional
     public void updateUser(Long id, UpdateRoleDTO updateRoleDto) {
         User user = userRepository.findById(id).orElseThrow();
         user.setTipo(updateRoleDto.getTipo());

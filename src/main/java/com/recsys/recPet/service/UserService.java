@@ -15,7 +15,7 @@ import com.recsys.recPet.repository.specification.UserSpecification;
 import com.recsys.recPet.security.JwtTokenProvider;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,7 +55,7 @@ public class UserService {
         this.enderecoRepository = enderecoRepository;
     }
 
-
+    @Transactional
     public RecoveryJwtTokenDto authenticateUser(UsuarioLoginDTO loginUserDto) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(loginUserDto.getEmail(), loginUserDto.getPassword());
@@ -69,7 +69,7 @@ public class UserService {
         return new RecoveryJwtTokenDto(token);
     }
 
-
+    @Transactional
     public void createUser(UsuarioAdotanteCreateDTO createUserDto) {
         User newUser = new User();
         newUser.setEmail(createUserDto.getEmail());
@@ -93,7 +93,7 @@ public class UserService {
         enderecoRepository.save(endereco);
     }
 
-
+    @Transactional
     public User update(User userObject){
         User userGet = findById(userObject.getId());
 
@@ -105,17 +105,20 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<UsuarioResponseDTO> findAll(String valor, TipoBusca tipoBusca, TipoUsuario role, Pageable pageable) {
         Specification<User> spec = UserSpecification.filterBy(valor, tipoBusca, role);
         Page<User> users = userRepository.findAll(spec, pageable);
         return users.map(UsuarioResponseDTO::new);
     }
 
+    @Transactional(readOnly = true)
     public User findById(Long id){
-        return userRepository.findById(id)
+        return userRepository.findByIdWithAdocoesAndAnimais(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
     }
 
+    @Transactional
     public void delete(Long id){
         User user  = findById(id);
         userRepository.delete(user);
@@ -163,7 +166,8 @@ public class UserService {
         return new UsuarioResponseDTO(usuarioSalvo);
     }
 
-    public boolean setValuesResetPassword(User user) throws MessagingException, UnsupportedEncodingException {
+    @Transactional
+    public void setValuesResetPassword(User user) throws MessagingException, UnsupportedEncodingException {
 
         String tokenGenerated = UUID.randomUUID().toString();
         user.setResetPasswordToken(tokenGenerated);
@@ -172,10 +176,10 @@ public class UserService {
 
         emailService.sendSimpleEmail(user.getEmail(), user.getNome(), tokenGenerated);
 
-        return true;
     }
 
-    public boolean resetNewPassword(String password, String token) {
+    @Transactional
+    public void resetNewPassword(String password, String token) {
         Optional<User> userResponse = userRepository.findByResetPasswordToken(token);
 
         if (userResponse.isEmpty()) {
@@ -197,6 +201,5 @@ public class UserService {
         user.setTokenExpiration(null);
 
         userRepository.save(user);
-        return true;
     }
 }

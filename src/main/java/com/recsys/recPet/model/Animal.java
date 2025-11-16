@@ -62,6 +62,25 @@ public class Animal {
     @ToString.Exclude
     private Set<AnimalCaracteristica> animalCaracteristicas  = new HashSet<>();
 
+    @Column(name = "castrado", nullable = false)
+    private boolean castrado;
+
+    @Column(name = "data_ultima_vermifugacao")
+    private LocalDate dataUltimaVermifugacao; // Use LocalDate para datas
+
+    @Column(name = "data_ultima_vacina_antirrabica")
+    private LocalDate dataUltimaVacinaAntirrabica;
+
+    @Column(name = "data_ultima_vacina_multipla")
+    private LocalDate dataUltimaVacinaMultipla;
+
+    @Column(name = "tipo_vacina_multipla", length = 10)
+    private String tipoVacinaMultipla;
+
+    @Lob
+    @Column(name = "observacoes_medicas", columnDefinition = "TEXT")
+    private String observacoesMedicas;
+
     public void addAnimalCaracteristica(AnimalCaracteristica associacao) {
         this.animalCaracteristicas.add(associacao);
         associacao.setAnimal(this);
