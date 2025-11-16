@@ -72,6 +72,13 @@ public class AdocaoService {
     }
 
     @Transactional(readOnly = true)
+    public AdocaoResponseAdminDTO findById(Long id) {
+        Adocao adocao = adocaoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Adoção não encontrada com ID: " + id));
+        return AdocaoResponseAdminDTO.fromEntity(adocao);
+    }
+
+    @Transactional(readOnly = true)
     public Adocao findByIdAndUser(Long id, User usuario) {
         Adocao adocao = adocaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Adoção não encontrada com"));

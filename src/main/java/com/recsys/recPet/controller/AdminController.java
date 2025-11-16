@@ -97,6 +97,12 @@ public class AdminController {
         return ResponseEntity.ok(adocaoDtoPage);
     }
 
+    @GetMapping("/adocoes/{id}")
+    public ResponseEntity<AdocaoResponseAdminDTO> getAdocao(@PathVariable Long id) {
+        AdocaoResponseAdminDTO adocao = adocaoService.findById(id);
+        return ResponseEntity.ok(adocao);
+    }
+
     @PatchMapping("/adocoes/{id}")
     public ResponseEntity<Adocao> updateStatus(@PathVariable Long id, @RequestBody AdocaoUpdateDTO solicitacaoUpdateDTO) {
         Adocao adocaoAtualizada = adocaoService.atualizarStatus(id, solicitacaoUpdateDTO);
