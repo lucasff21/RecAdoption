@@ -8,4 +8,5 @@ import lombok.Setter;
 public class CaracteristicaFormDTO {
     private String nome;
     private String descricao;
+    private Boolean ativo;
 }

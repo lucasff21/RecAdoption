@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 public class CaracteristicaDTO {
+    private Boolean ativo;
     private  Long id;
     private String nome;
     private String descricao;
@@ -19,6 +20,7 @@ public class CaracteristicaDTO {
         }
         CaracteristicaDTO dto = new CaracteristicaDTO();
         dto.setId(caracteristica.getId());
+        dto.setAtivo(caracteristica.getAtivo());
         dto.setNome(caracteristica.getNome());
         dto.setDescricao(caracteristica.getDescricao());
         return dto;
