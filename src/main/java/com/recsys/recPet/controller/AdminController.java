@@ -112,6 +112,9 @@ public class AdminController {
             @RequestParam(required = false) String faixaEtaria,
             @RequestParam(required = false) Boolean disponivelParaAdocao,
             @RequestParam(required = false) Tipo tipo,
+            @RequestParam(required = false) Boolean castrado,
+            @RequestParam(required = false) Boolean vacinado,
+            @RequestParam(required = false) Boolean vermifugado,
             @RequestParam(defaultValue = "0") int page
     ){
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -124,6 +127,9 @@ public class AdminController {
                 faixaEtaria,
                 disponivelParaAdocao,
                 tipo,
+                castrado,
+                vacinado,
+                vermifugado,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

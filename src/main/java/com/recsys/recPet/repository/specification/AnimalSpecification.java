@@ -138,4 +138,45 @@ public class AnimalSpecification {
             return criteriaBuilder.equal(root.get("tipo"), tipo);
         };
     }
+
+    public static Specification<Animal> comCastrado(Boolean castrado) {
+        return (root, query, criteriaBuilder) -> {
+            if (castrado == null) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.equal(root.get("castrado"), castrado);
+        };
+    }
+
+    public static Specification<Animal> comVermifugado(Boolean vermifugado) {
+        return (root, query, criteriaBuilder) -> {
+            if (vermifugado == null) {
+                return criteriaBuilder.conjunction();
+            }
+            if (vermifugado) {
+                return criteriaBuilder.isNotNull(root.get("dataUltimaVermifugacao"));
+            } else {
+                return criteriaBuilder.isNull(root.get("dataUltimaVermifugacao"));
+            }
+        };
+    }
+
+    public static Specification<Animal> comVacinado(Boolean vacinado) {
+        return (root, query, criteriaBuilder) -> {
+            if (vacinado == null) {
+                return criteriaBuilder.conjunction();
+            }
+
+            Predicate antirrabicaNotNull = criteriaBuilder.isNotNull(root.get("dataUltimaVacinaAntirrabica"));
+            Predicate multiplaNotNull = criteriaBuilder.isNotNull(root.get("dataUltimaVacinaMultipla"));
+
+            if (vacinado) {
+                return criteriaBuilder.and(antirrabicaNotNull, multiplaNotNull);
+            } else {
+                Predicate antirrabicaNull = criteriaBuilder.isNull(root.get("dataUltimaVacinaAntirrabica"));
+                Predicate multiplaNull = criteriaBuilder.isNull(root.get("dataUltimaVacinaMultipla"));
+                return criteriaBuilder.or(antirrabicaNull, multiplaNull);
+            }
+        };
+    }
 }
