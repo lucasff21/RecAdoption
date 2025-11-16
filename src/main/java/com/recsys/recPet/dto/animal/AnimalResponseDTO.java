@@ -28,6 +28,12 @@ public class AnimalResponseDTO {
     private List<CaracteristicaDTO> caracteristicas;
     private String descricao;
     private Boolean disponivelParaAdocao;
+    private Boolean castrado;
+    private LocalDate dataUltimaVermifugacao;
+    private LocalDate dataUltimaVacinaAntirrabica;
+    private LocalDate dataUltimaVacinaMultipla;
+    private String tipoVacinaMultipla;
+    private String observacoesMedicas;
 
     public AnimalResponseDTO(Animal animal) {
         this.id = animal.getId();
@@ -40,6 +46,13 @@ public class AnimalResponseDTO {
         this.imagemPath = animal.getImagemPath();
         this.descricao = animal.getDescricao();
         this.disponivelParaAdocao = animal.getDisponivelParaAdocao();
+
+        this.castrado = animal.isCastrado();
+        this.dataUltimaVermifugacao = animal.getDataUltimaVermifugacao();
+        this.dataUltimaVacinaAntirrabica = animal.getDataUltimaVacinaAntirrabica();
+        this.dataUltimaVacinaMultipla = animal.getDataUltimaVacinaMultipla();
+        this.tipoVacinaMultipla = animal.getTipoVacinaMultipla();
+        this.observacoesMedicas = animal.getObservacoesMedicas();
 
         if (animal.getAnimalCaracteristicas() != null) {
             this.caracteristicas = animal.getAnimalCaracteristicas().stream()

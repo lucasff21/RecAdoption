@@ -208,6 +208,7 @@ public class AnimalService {
         return new PageImpl<>(dtoList, pageable, animalPage.getTotalElements());
     }
 
+    @Transactional
     public void alterarDisponibilidade(Long animalId, Boolean disponivel) {
         Optional<Animal> animal = animalRepository.findById(animalId) ;
 

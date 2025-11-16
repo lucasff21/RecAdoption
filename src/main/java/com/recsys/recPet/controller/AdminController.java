@@ -4,7 +4,6 @@ import com.recsys.recPet.dto.admin.AdocaoResponseAdminDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
 import com.recsys.recPet.dto.admin.caracteristicas.CaracteristicaFormDTO;
 import com.recsys.recPet.dto.admin.metricas.SistemaMetricasDTO;
-import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
 import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.dto.pagina.PaginaRequestDTO;
@@ -112,7 +111,7 @@ public class AdminController {
             @RequestParam(required = false) List<Long> caracteristicas,
             @RequestParam(required = false) String faixaEtaria,
             @RequestParam(required = false) Boolean disponivelParaAdocao,
-            @RequestParam(required = false) Tipo especie,
+            @RequestParam(required = false) Tipo tipo,
             @RequestParam(defaultValue = "0") int page
     ){
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -124,7 +123,7 @@ public class AdminController {
                 caracteristicas,
                 faixaEtaria,
                 disponivelParaAdocao,
-                especie,
+                tipo,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

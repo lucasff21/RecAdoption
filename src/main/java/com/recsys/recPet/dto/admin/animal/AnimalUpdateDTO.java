@@ -37,6 +37,13 @@ public class AnimalUpdateDTO {
 
     private Boolean disponivelParaAdocao;
 
+    private Boolean castrado;
+    private LocalDate dataUltimaVermifugacao;
+    private LocalDate dataUltimaVacinaAntirrabica;
+    private LocalDate dataUltimaVacinaMultipla;
+    private String tipoVacinaMultipla;
+    private String observacoesMedicas;
+
     public void updateEntity(Animal animal) {
         Optional.ofNullable(this.nome).ifPresent(animal::setNome);
         Optional.ofNullable(this.dataNascimentoAproximada).ifPresent(animal::setDataNascimentoAproximada);
@@ -45,5 +52,12 @@ public class AnimalUpdateDTO {
         Optional.ofNullable(this.pelagem).ifPresent(animal::setPelagem);
         Optional.ofNullable(this.descricao).ifPresent(animal::setDescricao);
         Optional.ofNullable(this.disponivelParaAdocao).ifPresent(animal::setDisponivelParaAdocao);
+
+        Optional.ofNullable(this.castrado).ifPresent(animal::setCastrado);
+        animal.setDataUltimaVermifugacao(this.dataUltimaVermifugacao);
+        animal.setDataUltimaVacinaAntirrabica(this.dataUltimaVacinaAntirrabica);
+        animal.setDataUltimaVacinaMultipla(this.dataUltimaVacinaMultipla);
+        animal.setTipoVacinaMultipla(this.tipoVacinaMultipla);
+        animal.setObservacoesMedicas(this.observacoesMedicas);
     }
 }

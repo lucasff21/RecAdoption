@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 import java.util.List;
@@ -70,6 +71,7 @@ public class AdocaoService {
         return adocaoRepository.save(adocao);
     }
 
+    @Transactional(readOnly = true)
     public Adocao findByIdAndUser(Long id, User usuario) {
         Adocao adocao = adocaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Adoção não encontrada com"));
@@ -79,11 +81,13 @@ public class AdocaoService {
         return adocao;
     }
 
+    @Transactional
     public Adocao update(Long id, User usuario){
         Adocao adocaoExistente = findByIdAndUser(id, usuario);
         return adocaoRepository.save(adocaoExistente);
     }
 
+    @Transactional(readOnly = true)
     public PageImpl<AdocaoResponseAdminDTO> findAllAdocoes(AdocaoStatus status, String termo, Pageable pageable) {
         Specification<Adocao> spec = Specification
                 .where(AdocaoSpecification.comStatus(status))
@@ -98,6 +102,7 @@ public class AdocaoService {
         return new PageImpl<>(dtoList, pageable, adocaoPage.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
     public List<AdocaoResponseDTO> getAdocoesByUserId(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("Usuário não encontrado");
@@ -160,11 +165,13 @@ public class AdocaoService {
         adocaoOptional.ifPresent(adocaoRepository::delete);
     }
 
+    @Transactional(readOnly = true)
     public Page<AdocaoResponseAdminDTO> findAdocoesByAnimalId(Long animalId, Pageable pageable) {
         return adocaoRepository.findByAnimalId(animalId, pageable)
                 .map(AdocaoResponseAdminDTO::fromEntity);
     }
 
+    @Transactional(readOnly = true)
     public Page<AdocaoResponseAdminDTO> findPageByUserId(Long userId, Pageable pageable) {
         Page<Adocao> adocaoPage = adocaoRepository.findByUserId(userId, pageable);
         return adocaoPage.map(AdocaoResponseAdminDTO::fromEntity);
