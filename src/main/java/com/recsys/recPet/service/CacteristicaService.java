@@ -46,6 +46,7 @@ public class CacteristicaService {
         Caracteristica entity = new Caracteristica();
         entity.setNome(formDTO.getNome());
         entity.setDescricao(formDTO.getDescricao());
+        entity.setAtivo(formDTO.getAtivo());
 
         Caracteristica salva = caracteristicaRepository.save(entity);
         return CaracteristicaDTO.fromEntity(salva);
