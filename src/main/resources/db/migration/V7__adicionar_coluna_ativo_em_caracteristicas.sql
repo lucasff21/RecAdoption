@@ -1,0 +1,2 @@
+ALTER TABLE caracteristicas
+    ADD COLUMN ativo BOOLEAN NOT NULL DEFAULT true;

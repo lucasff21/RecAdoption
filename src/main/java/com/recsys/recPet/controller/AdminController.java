@@ -2,9 +2,11 @@ package com.recsys.recPet.controller;
 
 import com.recsys.recPet.dto.admin.AdocaoResponseAdminDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
+import com.recsys.recPet.dto.admin.caracteristicas.CaracteristicaFormDTO;
 import com.recsys.recPet.dto.admin.metricas.SistemaMetricasDTO;
 import com.recsys.recPet.dto.adocao.AdocaoResponseDTO;
 import com.recsys.recPet.dto.adocao.AdocaoUpdateDTO;
+import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.dto.pagina.PaginaRequestDTO;
 import com.recsys.recPet.dto.pagina.PaginaResponseDTO;
 import com.recsys.recPet.dto.usuario.UsuarioResponseDTO;
@@ -43,16 +45,18 @@ public class AdminController {
     private final AnimalService animalService;
     private final PaginaService paginaService;
     private final MetricasService metricasService;
+    private final CacteristicaService caracteristicaService;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, PaginaService paginaService, MetricasService metricasService) {
+    public AdminController(AdminService adminService, UserService userService, AdocaoService adocaoService, AnimalService animalService, PaginaService paginaService, MetricasService metricasService, CacteristicaService caracteristicaService) {
         this.adminService = adminService;
         this.userService = userService;
         this.adocaoService = adocaoService;
         this.animalService = animalService;
         this.paginaService = paginaService;
         this.metricasService = metricasService;
+        this.caracteristicaService = caracteristicaService;
     }
 
     @PostMapping()
@@ -190,5 +194,47 @@ public class AdminController {
     public ResponseEntity<SistemaMetricasDTO> getSystemMetrics() {
         SistemaMetricasDTO metrics = metricasService.getSystemMetrics();
         return ResponseEntity.ok(metrics);
+    }
+
+    @PostMapping("/caracteristicas")
+    public ResponseEntity<CaracteristicaDTO> criarCaracteristica(
+            @RequestBody @Valid CaracteristicaFormDTO formDTO) {
+
+        CaracteristicaDTO novoDTO = caracteristicaService.create(formDTO);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(novoDTO.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(novoDTO);
+    }
+
+    @GetMapping("/caracteristicas")
+    public ResponseEntity<List<CaracteristicaDTO>> getAllCaracteristicas(
+            @RequestParam(required = false) String nome,
+            @RequestParam(required = false) Boolean ativo
+    ) {
+        List<CaracteristicaDTO> caracteristicas = caracteristicaService.findAllCaracteristicas(nome, ativo);
+        return ResponseEntity.status(HttpStatus.OK).body(caracteristicas);
+    }
+
+    @PutMapping("/caracteristicas/{id}")
+    public ResponseEntity<CaracteristicaDTO> editarCaracteristica(
+            @PathVariable Long id,
+            @RequestBody CaracteristicaFormDTO formDTO) {
+
+        CaracteristicaDTO dtoAtualizado = caracteristicaService.update(id, formDTO);
+        return ResponseEntity.ok(dtoAtualizado);
+    }
+
+    @PutMapping("/caracteristicas/{id}/desativar")
+    public ResponseEntity<Void> desativar(@PathVariable Long id) {
+        caracteristicaService.desativar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/caracteristicas/{id}/reativar")
+    public ResponseEntity<Void> reativar(@PathVariable Long id) {
+        caracteristicaService.reativar(id);
+        return ResponseEntity.noContent().build();
     }
 }

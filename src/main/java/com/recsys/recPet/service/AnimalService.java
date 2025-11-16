@@ -4,7 +4,6 @@ import com.recsys.recPet.dto.admin.animal.AnimalAdminResponseDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
-import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.model.AnimalCaracteristicaId;
@@ -178,13 +177,6 @@ public class AnimalService {
     public void delete(Long id) {
         Optional<Animal> animal =  animalRepository.findById(id);
         animal.ifPresent(animalRepository::delete);
-    }
-
-    public List<CaracteristicaDTO> findAllCaracteristicas() {
-        List<Caracteristica> caracteristicas = caracteristicaRepository.findAll();
-        return caracteristicas.stream()
-                .map(CaracteristicaDTO::fromEntity)
-                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)

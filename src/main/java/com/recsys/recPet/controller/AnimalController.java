@@ -7,6 +7,7 @@ import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
 import com.recsys.recPet.service.AnimalService;
+import com.recsys.recPet.service.CacteristicaService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,14 @@ import java.util.List;
 public class AnimalController {
 
     private final AnimalService animalService;
+    private final CacteristicaService caracteristicaService;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    public AnimalController(AnimalService animalService) {
+    public AnimalController(AnimalService animalService, CacteristicaService caracteristicaService) {
+
         this.animalService = animalService;
+        this.caracteristicaService = caracteristicaService;
     }
 
     @GetMapping()
@@ -87,10 +91,9 @@ public class AnimalController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
     @GetMapping("/caracteristicas")
     public ResponseEntity<List<CaracteristicaDTO>> getAllCaracteristicas() {
-        List<CaracteristicaDTO> caracteristicas = animalService.findAllCaracteristicas();
+        List<CaracteristicaDTO> caracteristicas = caracteristicaService.findAllCaracteristicas(null, true);
         return ResponseEntity.status(HttpStatus.OK).body(caracteristicas);
     }
 }

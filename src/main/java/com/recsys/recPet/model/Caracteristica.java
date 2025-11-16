@@ -17,4 +17,5 @@ public class Caracteristica {
 
     private String nome;
     private String descricao;
+    private Boolean ativo;
 }
