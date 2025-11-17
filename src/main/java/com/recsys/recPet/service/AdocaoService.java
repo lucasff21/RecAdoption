@@ -122,6 +122,7 @@ public class AdocaoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public Adocao atualizarStatus(Long id, AdocaoUpdateDTO dto) {
         Adocao adocao = adocaoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Adoção não encontrada com o id: " + id));
