@@ -19,4 +19,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             "LEFT JOIN FETCH a.animal an " +
             "WHERE u.id = :id")
     Optional<User> findByIdWithAdocoesAndAnimais(Long id);
+    @Query("SELECT u FROM User u " +
+            "LEFT JOIN FETCH u.adocoes a " +
+            "LEFT JOIN FETCH a.animal an " +
+            "LEFT JOIN FETCH u.questionario q " +
+            "WHERE u.email = :email")
+    Optional<User> findByEmailCompleto(String email);
 }

@@ -33,9 +33,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        User user = usuarioService.findByEmail(loginUserDto.getEmail());
-
-        UsuarioResponseDTO userDTO =  new UsuarioResponseDTO(user);
+        UsuarioResponseDTO userDTO = usuarioService.findDTOByEmail(loginUserDto.getEmail());
 
         UserLoginResponseDTO response = new UserLoginResponseDTO(userDTO, token.token());
         return ResponseEntity.ok(response);
@@ -74,8 +72,7 @@ public class UserController {
     @PostMapping("/password-reset")
     public ResponseEntity<?> requestPasswordReset(@Valid @RequestBody UsuarioPasswordResetRequestDTO requestDTO) {
         try {
-            User user = usuarioService.findByEmail(requestDTO.email());
-            usuarioService.setValuesResetPassword(user);
+            usuarioService.processPasswordReset(requestDTO.email());
             return ResponseEntity.ok(Map.of("message", "Se o e-mail estiver correto, você receberá um link."));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.ok(Map.of("message", "Se o e-mail estiver correto, você receberá um link."));

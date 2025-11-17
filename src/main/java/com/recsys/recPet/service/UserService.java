@@ -124,9 +124,19 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public User findByEmail(String email){
-        return userRepository.findByEmail(email)
+    @Transactional(readOnly = true)
+    public UsuarioResponseDTO findDTOByEmail(String email) {
+
+        User usuario = userRepository.findByEmailCompleto(email)
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        return new UsuarioResponseDTO(usuario);
+    }
+    @Transactional
+    public void processPasswordReset(String email) throws MessagingException, UnsupportedEncodingException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        this.setValuesResetPassword(user);
+        userRepository.save(user);
     }
 
     @Transactional()
