@@ -1,33 +1,53 @@
 package com.recsys.recPet.dto.questionario;
 
 import com.recsys.recPet.enums.questionario.QuestionarioMoradia;
+import com.recsys.recPet.enums.questionario.QuestionarioPreferenciaSexo;
+import com.recsys.recPet.enums.questionario.QuestionarioTemCriancas;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class QuestionarioCreateDTO {
+    @NotNull
+    private QuestionarioPreferenciaSexo preferenciaSexo;
+
+    @NotNull
+    private QuestionarioTemCriancas temCriancas;
 
     @NotNull(message = "O tipo de moradia é obrigatório")
     private QuestionarioMoradia moradia;
 
-    @NotNull(message = "A informação sobre telas de proteção é obrigatória")
-    private Boolean telasProtecao;
+    @NotNull @Min(1) @Max(3)
+    private Integer preferenciaPorte;
 
-    @NotNull(message = "A informação sobre acordo familiar é obrigatória")
-    private Boolean todosDeAcordo;
+    @NotNull @Min(1) @Max(5)
+    private Integer nivelQuedaPelo;
 
-    @NotNull(message = "A quantidade de cães é obrigatória")
-    @Min(value = 0, message = "A quantidade não pode ser negativa")
-    private Integer qtdCaes;
+    @NotNull @Min(1) @Max(5)
+    private Integer nivelLatido;
 
-    @NotNull(message = "A quantidade de gatos é obrigatória")
-    @Min(value = 0, message = "A quantidade não pode ser negativa")
-    private Integer qtdGatos;
+    @NotNull @Min(1) @Max(5)
+    private Integer instintoGuarda;
 
-    @NotNull(message = "A quantidade de outros animais é obrigatória")
-    @Min(value = 0, message = "A quantidade não pode ser negativa")
-    private Integer qtdOutros;
+    @NotNull @Min(1) @Max(5)
+    private Integer nivelEnergia;
+
+    @NotNull @Min(1) @Max(5)
+    private Integer tempoDisponivel;
+
+    @NotNull @Min(1) @Max(5)
+    private Integer experienciaPets;
+
+    @NotNull
+    private Boolean disposicaoNecessidadesEspeciais;
+
+    @NotNull
+    private Boolean possuiGatos;
+
+    @NotNull
+    private Boolean possuiCaes;
 
     @NotNull(message = "A informação sobre custos é obrigatória")
     private Boolean cienteCustos;
@@ -40,4 +60,13 @@ public class QuestionarioCreateDTO {
 
     @NotNull(message = "O termo 'paciência e adaptação' é obrigatório")
     private Boolean termoPacienciaAdaptacao;
+
+    @NotNull
+    private Boolean termoVistoria;
+
+    @NotNull
+    private Boolean termoDevolucaoNaoAbandono;
+
+    @NotNull
+    private Boolean termoLegislacaoPosseResponsavel;
 }

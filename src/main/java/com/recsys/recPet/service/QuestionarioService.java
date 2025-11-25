@@ -54,15 +54,26 @@ public class QuestionarioService {
     }
 
     private void mapDtoToEntity(QuestionarioCreateDTO dto, Questionario questionario) {
+        questionario.setPreferenciaSexo(dto.getPreferenciaSexo());
+        questionario.setTemCriancas(dto.getTemCriancas());
+        questionario.setPreferenciaPorte(dto.getPreferenciaPorte());
+        questionario.setNivelQuedaPelo(dto.getNivelQuedaPelo());
+        questionario.setNivelLatido(dto.getNivelLatido());
+        questionario.setInstintoGuarda(dto.getInstintoGuarda());
+        questionario.setNivelEnergia(dto.getNivelEnergia());
         questionario.setMoradia(dto.getMoradia());
-        questionario.setTelasProtecao(dto.getTelasProtecao());
-        questionario.setTodosDeAcordo(dto.getTodosDeAcordo());
-        questionario.setQtdCaes(dto.getQtdCaes());
-        questionario.setQtdGatos(dto.getQtdGatos());
-        questionario.setQtdOutros(dto.getQtdOutros());
+        questionario.setTempoDisponivel(dto.getTempoDisponivel());
+        questionario.setExperienciaPets(dto.getExperienciaPets());
+        questionario.setDisposicaoNecessidadesEspeciais(dto.getDisposicaoNecessidadesEspeciais());
+        questionario.setPossuiCaes(dto.getPossuiCaes());
+        questionario.setPossuiGatos(dto.getPossuiGatos());
         questionario.setCienteCustos(dto.getCienteCustos());
+
         questionario.setTermoCompromissoLongoPrazo(dto.getTermoCompromissoLongoPrazo());
         questionario.setTermoSaudeBemEstar(dto.getTermoSaudeBemEstar());
         questionario.setTermoPacienciaAdaptacao(dto.getTermoPacienciaAdaptacao());
+        questionario.setTermoVistoria(dto.getTermoVistoria());
+        questionario.setTermoDevolucaoNaoAbandono(dto.getTermoDevolucaoNaoAbandono());
+        questionario.setTermoLegislacaoPosseResponsavel(dto.getTermoLegislacaoPosseResponsavel());
     }
 }
