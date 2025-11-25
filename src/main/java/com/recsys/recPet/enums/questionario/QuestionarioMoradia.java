@@ -1,8 +1,9 @@
 package com.recsys.recPet.enums.questionario;
 
 public enum QuestionarioMoradia {
-    CASA_QUINTAL_TOTALMENTE_FECHADO,
-    CASA_QUINTAL_ABERTO,
+    KITNET,
+    APARTAMENTO_PEQUENO,
+    APARTAMENTO_GRANDE,
     CASA_SEM_QUINTAL,
-    APARTAMENTO
+    CASA_COM_QUINTAL
 }
