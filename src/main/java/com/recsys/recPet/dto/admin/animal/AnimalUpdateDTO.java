@@ -43,6 +43,16 @@ public class AnimalUpdateDTO {
     private LocalDate dataUltimaVacinaMultipla;
     private String tipoVacinaMultipla;
     private String observacoesMedicas;
+    @Size(max = 10)
+    private String rgAnimal;
+
+    @Size(max = 20)
+    private String microchipId;
+
+    @Size(max = 20)
+    private String raca;
+
+    private String observacoesPrivadas;
 
     public void updateEntity(Animal animal) {
         Optional.ofNullable(this.nome).ifPresent(animal::setNome);
@@ -59,5 +69,9 @@ public class AnimalUpdateDTO {
         animal.setDataUltimaVacinaMultipla(this.dataUltimaVacinaMultipla);
         animal.setTipoVacinaMultipla(this.tipoVacinaMultipla);
         animal.setObservacoesMedicas(this.observacoesMedicas);
+        animal.setRgAnimal(this.rgAnimal);
+        animal.setObservacoesPrivadas(this.observacoesPrivadas);
+        animal.setMicrochipId(this.microchipId);
+        animal.setRaca(this.raca);
     }
 }

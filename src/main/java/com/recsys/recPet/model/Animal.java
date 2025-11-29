@@ -77,9 +77,20 @@ public class Animal {
     @Column(name = "tipo_vacina_multipla", length = 10)
     private String tipoVacinaMultipla;
 
-    @Lob
     @Column(name = "observacoes_medicas", columnDefinition = "TEXT")
     private String observacoesMedicas;
+
+    @Column(name = "rg_animal", length = 10)
+    private String rgAnimal;
+
+    @Column(name ="microchip_id", length = 20)
+    private String microchipId;
+
+    @Column(name = "raca", length = 20)
+    private String raca;
+
+    @Column(name = "observacoes_privadas", columnDefinition = "TEXT")
+    private String observacoesPrivadas;
 
     public void addAnimalCaracteristica(AnimalCaracteristica associacao) {
         this.animalCaracteristicas.add(associacao);

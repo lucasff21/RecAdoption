@@ -37,6 +37,11 @@ public class AnimalResponseDTO {
     private LocalDate dataUltimaVacinaMultipla;
     private String tipoVacinaMultipla;
     private String observacoesMedicas;
+    private String raca;
+    private String microchipId;
+    private String rgAnimal;
+    private String observacoesPrivadas;
+
 
     public AnimalResponseDTO(Animal animal) {
         this.id = animal.getId();
@@ -56,6 +61,11 @@ public class AnimalResponseDTO {
         this.dataUltimaVacinaMultipla = animal.getDataUltimaVacinaMultipla();
         this.tipoVacinaMultipla = animal.getTipoVacinaMultipla();
         this.observacoesMedicas = animal.getObservacoesMedicas();
+
+        this.raca = animal.getRaca();
+        this.rgAnimal = animal.getRgAnimal();
+        this.observacoesPrivadas = animal.getObservacoesPrivadas();
+        this.microchipId = animal.getMicrochipId();
 
         if (animal.getAnimalCaracteristicas() != null) {
             this.caracteristicas = animal.getAnimalCaracteristicas().stream()
