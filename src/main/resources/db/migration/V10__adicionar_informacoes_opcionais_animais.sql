@@ -1,0 +1,5 @@
+ALTER TABLE animais
+    ADD COLUMN IF NOT EXISTS rg_animal VARCHAR(10),
+    ADD COLUMN IF NOT EXISTS microchip_id VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS raca VARCHAR(20),
+    ADD COLUMN IF NOT EXISTS observacoes_privadas TEXT;

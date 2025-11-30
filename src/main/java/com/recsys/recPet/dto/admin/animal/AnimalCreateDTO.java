@@ -5,6 +5,8 @@ import com.recsys.recPet.enums.animal.Porte;
 import com.recsys.recPet.enums.animal.Sexo;
 import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,6 +54,18 @@ public class AnimalCreateDTO {
     private LocalDate dataUltimaVacinaMultipla;
     @Size(max = 10, message = "Tipo da vacina deve ter no máximo 20 caracteres")
     private String tipoVacinaMultipla;
+
+    @Size(max = 10)
+    private String rgAnimal;
+
+    @Size(max = 20)
+    private String microchipId;
+
+    @Size(max = 20)
+    private String raca;
+
+    private String observacoesPrivadas;
+
     private String observacoesMedicas;
 
     public Animal toEntity() {
@@ -71,6 +85,10 @@ public class AnimalCreateDTO {
         animal.setDataUltimaVacinaMultipla(this.dataUltimaVacinaMultipla);
         animal.setTipoVacinaMultipla(this.tipoVacinaMultipla);
         animal.setObservacoesMedicas(this.observacoesMedicas);
+        animal.setRgAnimal(this.rgAnimal);
+        animal.setObservacoesPrivadas(this.observacoesPrivadas);
+        animal.setMicrochipId(this.microchipId);
+        animal.setRaca(this.raca);
 
         return animal;
     }
