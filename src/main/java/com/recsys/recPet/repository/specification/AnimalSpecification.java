@@ -23,6 +23,24 @@ public class AnimalSpecification {
         };
     }
 
+    public static Specification<Animal> comMicrochip(String microchip) {
+        return (root, query, criteriaBuilder) -> {
+            if (microchip == null || microchip.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("microchipId")), "%" + microchip.toLowerCase() + "%");
+        };
+    }
+
+    public static Specification<Animal> comRg(String rg) {
+        return (root, query, criteriaBuilder) -> {
+            if (rg == null || rg.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("rgAnimal")), "%" + rg.toLowerCase() + "%");
+        };
+    }
+
     public static Specification<Animal> comSexo(String sexoFiltro) {
         return (root, query, criteriaBuilder) -> {
             if (sexoFiltro == null || sexoFiltro.trim().isEmpty()) {

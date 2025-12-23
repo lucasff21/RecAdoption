@@ -45,6 +45,7 @@ public class AnimalController {
             @RequestParam(required = false) Tipo especie,
             @RequestParam(required = false) Boolean castrado,
             @RequestParam(required = false) Boolean vacinado,
+            @RequestParam(required = false) String microchip,
             @RequestParam(defaultValue = "0") int page
     ) {
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -58,6 +59,7 @@ public class AnimalController {
                 especie,
                 castrado,
                 vacinado,
+                microchip,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

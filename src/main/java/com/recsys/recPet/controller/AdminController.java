@@ -121,6 +121,8 @@ public class AdminController {
             @RequestParam(required = false) Boolean castrado,
             @RequestParam(required = false) Boolean vacinado,
             @RequestParam(required = false) Boolean vermifugado,
+            @RequestParam(required = false) String microchip,
+            @RequestParam(required = false) String rg,
             @RequestParam(defaultValue = "0") int page
     ){
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
@@ -136,6 +138,8 @@ public class AdminController {
                 castrado,
                 vacinado,
                 vermifugado,
+                microchip,
+                rg,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);

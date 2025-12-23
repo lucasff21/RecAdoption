@@ -52,6 +52,7 @@ public class AnimalService {
             Tipo tipo,
             Boolean castrado,
             Boolean vacinado,
+            String microchip,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
@@ -63,6 +64,7 @@ public class AnimalService {
                 .and(AnimalSpecification.comTipo(tipo))
                 .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds))
                 .and(AnimalSpecification.comCastrado(castrado))
+                .and(AnimalSpecification.comMicrochip(microchip))
                 .and(AnimalSpecification.comVacinado(vacinado));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
@@ -195,6 +197,8 @@ public class AnimalService {
             Boolean castrado,
             Boolean vacinado,
             Boolean vermifugado,
+            String microchip,
+            String rg,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
@@ -207,6 +211,8 @@ public class AnimalService {
                 .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds))
                 .and(AnimalSpecification.comCastrado(castrado))
                 .and(AnimalSpecification.comVacinado(vacinado))
+                .and(AnimalSpecification.comMicrochip(microchip))
+                .and(AnimalSpecification.comRg(rg))
                 .and(AnimalSpecification.comVermifugado(vermifugado));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
