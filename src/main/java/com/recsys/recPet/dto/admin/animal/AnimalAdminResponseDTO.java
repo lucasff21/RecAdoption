@@ -13,10 +13,12 @@ import java.util.stream.Collectors;
 @Setter
 public class AnimalAdminResponseDTO extends AnimalResponseDTO {
     private List<AdocaoResponseDTO> adocoes;
+    private String observacoesPrivadas;
 
     public AnimalAdminResponseDTO(Animal animal) {
         super(animal);
 
+        this.observacoesPrivadas = animal.getObservacoesPrivadas();
         if (animal.getAdocoes() != null) {
             this.adocoes = animal.getAdocoes().stream()
                     .map(AdocaoResponseDTO::fromEntity)
