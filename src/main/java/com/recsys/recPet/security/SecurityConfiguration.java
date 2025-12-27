@@ -55,7 +55,6 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(HttpMethod.GET, "/api/animais").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/animais/filtros").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/animais/caracteristicas").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/animais/{id}", "/api/animais/{id}/").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
