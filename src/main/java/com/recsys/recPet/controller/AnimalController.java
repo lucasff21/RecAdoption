@@ -1,11 +1,16 @@
 package com.recsys.recPet.controller;
 
+import com.recsys.recPet.dto.AnimalFiltrosDTO;
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.CaracteristicaDTO;
 import com.recsys.recPet.enums.animal.Tipo;
 import com.recsys.recPet.model.Animal;
+import com.recsys.recPet.model.Cor;
+import com.recsys.recPet.model.Raca;
+import com.recsys.recPet.repository.CorRepository;
+import com.recsys.recPet.repository.RacaRepository;
 import com.recsys.recPet.service.AnimalService;
 import com.recsys.recPet.service.CacteristicaService;
 import jakarta.validation.Valid;
@@ -26,22 +31,28 @@ public class AnimalController {
 
     private final AnimalService animalService;
     private final CacteristicaService caracteristicaService;
+    private final CorRepository corRepository;
+    private final RacaRepository racaRepository;
 
     private static final int DEFAULT_PAGE_SIZE = 20;
 
-    public AnimalController(AnimalService animalService, CacteristicaService caracteristicaService) {
+    public AnimalController(AnimalService animalService, CacteristicaService caracteristicaService, CorRepository corRepository, RacaRepository racaRepository) {
 
         this.animalService = animalService;
         this.caracteristicaService = caracteristicaService;
+        this.corRepository = corRepository;
+        this.racaRepository = racaRepository;
     }
 
     @GetMapping()
     public ResponseEntity<Page<AnimalResponseDTO>> findAll(
             @RequestParam(required = false) String nome,
             @RequestParam(required = false) String sexo,
-            @RequestParam(required = false) String porte,
+            @RequestParam(required = false) List<String> porte,
             @RequestParam(value = "caracteristicasIds", required = false) List<Long> caracteristicas,
-            @RequestParam(required = false) String faixaEtaria,
+            @RequestParam(required = false) List<String> faixaEtaria,
+            @RequestParam(required = false) List<Long> racaId,
+            @RequestParam(required = false) List<Long> corId,
             @RequestParam(required = false) Tipo especie,
             @RequestParam(required = false) Boolean castrado,
             @RequestParam(required = false) Boolean vacinado,
@@ -60,6 +71,8 @@ public class AnimalController {
                 castrado,
                 vacinado,
                 microchip,
+                racaId,
+                corId,
                 pageable
         );
         return ResponseEntity.status(HttpStatus.OK).body(animalPage);
@@ -101,5 +114,14 @@ public class AnimalController {
     public ResponseEntity<List<CaracteristicaDTO>> getAllCaracteristicas() {
         List<CaracteristicaDTO> caracteristicas = caracteristicaService.findAllCaracteristicas(null, true);
         return ResponseEntity.status(HttpStatus.OK).body(caracteristicas);
+    }
+
+    @GetMapping("/filtros")
+    public ResponseEntity<AnimalFiltrosDTO> getMetadataFiltros() {
+        List<CaracteristicaDTO> caracteristicas = caracteristicaService.findAllCaracteristicas(null, true);
+        List<Cor> cores = corRepository.findAll();
+        List<Raca> racas = racaRepository.findAll();
+
+        return ResponseEntity.ok(new AnimalFiltrosDTO(caracteristicas, cores, racas));
     }
 }

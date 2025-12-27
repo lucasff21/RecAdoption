@@ -5,13 +5,8 @@ import com.recsys.recPet.dto.admin.animal.AnimalCreateDTO;
 import com.recsys.recPet.dto.animal.AnimalResponseDTO;
 import com.recsys.recPet.dto.admin.animal.AnimalUpdateDTO;
 import com.recsys.recPet.enums.animal.Tipo;
-import com.recsys.recPet.model.Animal;
-import com.recsys.recPet.model.AnimalCaracteristicaId;
-import com.recsys.recPet.model.Caracteristica;
-import com.recsys.recPet.model.AnimalCaracteristica;
-import com.recsys.recPet.repository.AnimalRepository;
-import com.recsys.recPet.repository.CaracteristicaRepository;
-import com.recsys.recPet.repository.AnimalCaracteristicaRepository;
+import com.recsys.recPet.model.*;
+import com.recsys.recPet.repository.*;
 import com.recsys.recPet.repository.specification.AnimalSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
@@ -32,45 +27,53 @@ public class AnimalService {
     private final ImageService imageService;
     private final CaracteristicaRepository caracteristicaRepository;
     private final AnimalCaracteristicaRepository animalCaracteristicaRepository;
+    private final CorRepository corRepository;
+    private final RacaRepository racaRepository;
 
     public AnimalService(AnimalRepository animalRepository, ImageService imageService,
                          CaracteristicaRepository caracteristicaRepository,
-                         AnimalCaracteristicaRepository animalCaracteristicaRepository) {
+                         AnimalCaracteristicaRepository animalCaracteristicaRepository, CorRepository corRepository, RacaRepository racaRepository) {
         this.animalRepository = animalRepository;
         this.imageService = imageService;
         this.caracteristicaRepository = caracteristicaRepository;
         this.animalCaracteristicaRepository = animalCaracteristicaRepository;
+        this.corRepository = corRepository;
+        this.racaRepository = racaRepository;
     }
 
     @Transactional(readOnly = true)
     public PageImpl<AnimalResponseDTO> findAll(
             String nome,
             String sexo,
-            String porte,
+            List<String> porte,
             List<Long> caracteristicaIds,
-            String faixaEtaria,
+            List<String> faixaEtaria,
             Tipo tipo,
             Boolean castrado,
             Boolean vacinado,
             String microchip,
+            List<Long> corIds,
+            List<Long> racaIds,
             Pageable pageable
     ) {
         Specification<Animal> spec = Specification
                 .where(AnimalSpecification.comNome(nome))
                 .and(AnimalSpecification.disponivelParaAdocao(true))
                 .and(AnimalSpecification.comSexo(sexo))
-                .and(AnimalSpecification.comPorte(porte))
-                .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
+                .and(AnimalSpecification.comPortes(porte))
+                .and(AnimalSpecification.comFaixasEtarias(faixaEtaria))
                 .and(AnimalSpecification.comTipo(tipo))
                 .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds))
                 .and(AnimalSpecification.comCastrado(castrado))
                 .and(AnimalSpecification.comMicrochip(microchip))
-                .and(AnimalSpecification.comVacinado(vacinado));
+                .and(AnimalSpecification.comVacinado(vacinado))
+                .and(AnimalSpecification.comCores(corIds))
+                .and(AnimalSpecification.comRacas(racaIds));
 
         Page<Animal> animalPage = animalRepository.findAll(spec, pageable);
 
         List<AnimalResponseDTO> dtoList = animalPage.getContent().stream()
-                .map( AnimalResponseDTO::fromEntity)
+                .map(AnimalResponseDTO::fromEntity)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtoList, pageable, animalPage.getTotalElements());
@@ -107,6 +110,18 @@ public class AnimalService {
             imageService.delete(animalExistente.getImagemPath());
 
             animalExistente.setImagemPath((String) image.get("secure_url"));
+        }
+
+        if (animalDTO.getCorId() != null) {
+            Cor cor = corRepository.findById(animalDTO.getCorId())
+                    .orElseThrow(() -> new RuntimeException("Cor não encontrada"));
+            animalExistente.setCor(cor);
+        }
+
+        if (animalDTO.getRacaId() != null) {
+            Raca novaRaca = racaRepository.findById(animalDTO.getRacaId())
+                    .orElseThrow(() -> new RuntimeException("Raça não encontrada"));
+            animalExistente.setRaca(novaRaca);
         }
 
         return animalRepository.save(animalExistente);
@@ -175,7 +190,18 @@ public class AnimalService {
                 }
                 savedAnimal.addAnimalCaracteristica(ac);
             }
+        }
 
+        if (animalDTO.getCorId() != null) {
+            Cor cor = corRepository.findById(animalDTO.getCorId())
+                    .orElseThrow(() -> new RuntimeException("Cor não encontrada"));
+            animal.setCor(cor);
+        }
+
+        if (animalDTO.getRacaId() != null) {
+            Raca novaRaca = racaRepository.findById(animalDTO.getRacaId())
+                    .orElseThrow(() -> new RuntimeException("Raça não encontrada"));
+            animal.setRaca(novaRaca);
         }
     }
 
@@ -189,9 +215,11 @@ public class AnimalService {
     public PageImpl<AnimalAdminResponseDTO> findAllForAdmin(
             String nome,
             String sexo,
-            String porte,
+            List<String> porte,
             List<Long> caracteristicaIds,
-            String faixaEtaria,
+            List<String> faixaEtaria,
+            List<Long> racaIds,
+            List<Long> corIds,
             Boolean disponivelParaAdocao,
             Tipo especie,
             Boolean castrado,
@@ -205,8 +233,10 @@ public class AnimalService {
                 .where(AnimalSpecification.comNome(nome))
                 .and(AnimalSpecification.disponivelParaAdocao(disponivelParaAdocao))
                 .and(AnimalSpecification.comSexo(sexo))
-                .and(AnimalSpecification.comPorte(porte))
-                .and(AnimalSpecification.comFaixaEtaria(faixaEtaria))
+                .and(AnimalSpecification.comPortes(porte))
+                .and(AnimalSpecification.comFaixasEtarias(faixaEtaria))
+                .and(AnimalSpecification.comRacas(racaIds))
+                .and(AnimalSpecification.comCores(corIds))
                 .and(AnimalSpecification.comTipo(especie))
                 .and(AnimalSpecification.comCaracteristicasPorId(caracteristicaIds))
                 .and(AnimalSpecification.comCastrado(castrado))

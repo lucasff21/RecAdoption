@@ -49,8 +49,9 @@ public class AnimalUpdateDTO {
     @Size(max = 20)
     private String microchipId;
 
-    @Size(max = 20)
-    private String raca;
+    private Integer racaId;
+
+    private Integer corId;
 
     private String observacoesPrivadas;
 
@@ -72,6 +73,5 @@ public class AnimalUpdateDTO {
         animal.setRgAnimal(this.rgAnimal);
         animal.setObservacoesPrivadas(this.observacoesPrivadas);
         animal.setMicrochipId(this.microchipId);
-        animal.setRaca(this.raca);
     }
 }

@@ -41,6 +41,7 @@ public class AnimalResponseDTO {
     private String microchipId;
     private String rgAnimal;
     private String observacoesPrivadas;
+    private String cor;
 
 
     public AnimalResponseDTO(Animal animal) {
@@ -62,7 +63,8 @@ public class AnimalResponseDTO {
         this.tipoVacinaMultipla = animal.getTipoVacinaMultipla();
         this.observacoesMedicas = animal.getObservacoesMedicas();
 
-        this.raca = animal.getRaca();
+        this.raca = animal.getRaca() != null ? animal.getRaca().getNome() : null;
+        this.cor = animal.getCor() != null ? animal.getCor().getNome() : null;
         this.rgAnimal = animal.getRgAnimal();
         this.observacoesPrivadas = animal.getObservacoesPrivadas();
         this.microchipId = animal.getMicrochipId();

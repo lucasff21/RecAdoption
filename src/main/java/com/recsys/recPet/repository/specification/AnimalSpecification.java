@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AnimalSpecification {
     public static Specification<Animal> comNome(String nome) {
@@ -196,5 +197,47 @@ public class AnimalSpecification {
                 return criteriaBuilder.or(antirrabicaNull, multiplaNull);
             }
         };
+    }
+
+    public static Specification<Animal> comPortes(List<String> portesFiltro) {
+        return (root, query, cb) -> {
+            if (portesFiltro == null || portesFiltro.isEmpty()) return cb.conjunction();
+            List<Porte> enums = portesFiltro.stream().map(Porte::fromString).collect(Collectors.toList());
+            return root.get("porte").in(enums);
+        };
+    }
+
+    public static Specification<Animal> comFaixasEtarias(List<String> faixas) {
+        return (root, query, cb) -> {
+            if (faixas == null || faixas.isEmpty()) return cb.conjunction();
+            LocalDate today = LocalDate.now();
+            List<Predicate> orPredicates = new ArrayList<>();
+
+            for (String faixa : faixas) {
+                switch (faixa.toLowerCase()) {
+                    case "filhote":
+                        orPredicates.add(cb.between(root.get("dataNascimentoAproximada"), today.minusYears(1), today));
+                        break;
+                    case "adolescente":
+                        orPredicates.add(cb.between(root.get("dataNascimentoAproximada"), today.minusYears(3), today.minusYears(1).minusDays(1)));
+                        break;
+                    case "adulto":
+                        orPredicates.add(cb.between(root.get("dataNascimentoAproximada"), today.minusYears(8), today.minusYears(3).minusDays(1)));
+                        break;
+                    case "idoso":
+                        orPredicates.add(cb.lessThan(root.get("dataNascimentoAproximada"), today.minusYears(8)));
+                        break;
+                }
+            }
+            return cb.or(orPredicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public static Specification<Animal> comRacas(List<Long> racaIds) {
+        return (root, query, cb) -> (racaIds == null || racaIds.isEmpty()) ? cb.conjunction() : root.get("raca").get("id").in(racaIds);
+    }
+
+    public static Specification<Animal> comCores(List<Long> corIds) {
+        return (root, query, cb) -> (corIds == null || corIds.isEmpty()) ? cb.conjunction() : root.get("cor").get("id").in(corIds);
     }
 }

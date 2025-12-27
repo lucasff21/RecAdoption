@@ -66,7 +66,7 @@ public class Animal {
     private boolean castrado;
 
     @Column(name = "data_ultima_vermifugacao")
-    private LocalDate dataUltimaVermifugacao; // Use LocalDate para datas
+    private LocalDate dataUltimaVermifugacao;
 
     @Column(name = "data_ultima_vacina_antirrabica")
     private LocalDate dataUltimaVacinaAntirrabica;
@@ -86,11 +86,16 @@ public class Animal {
     @Column(name ="microchip_id", length = 20)
     private String microchipId;
 
-    @Column(name = "raca", length = 20)
-    private String raca;
-
     @Column(name = "observacoes_privadas", columnDefinition = "TEXT")
     private String observacoesPrivadas;
+
+    @ManyToOne
+    @JoinColumn(name = "raca_id")
+    private Raca raca;
+
+    @ManyToOne
+    @JoinColumn(name = "cor_id")
+    private Cor cor;
 
     public void addAnimalCaracteristica(AnimalCaracteristica associacao) {
         this.animalCaracteristicas.add(associacao);

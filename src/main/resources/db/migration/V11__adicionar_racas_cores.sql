@@ -1,0 +1,18 @@
+CREATE TABLE IF NOT EXISTS cores (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS racas (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    especie animal_tipo NOT NULL,
+    CONSTRAINT unique_raca_especie UNIQUE (nome, especie)
+);
+
+ALTER TABLE animais
+    ADD COLUMN IF NOT EXISTS cor_id INTEGER REFERENCES cores(id),
+    ADD COLUMN IF NOT EXISTS raca_id INTEGER REFERENCES racas(id);
+
+ALTER TABLE animais
+    DROP COLUMN IF EXISTS raca;
